@@ -1,0 +1,16 @@
+/* Stealth Mode - hide Fancord plugin UI (but NOT settings access) */
+
+/* Plugin buttons: header bar, channel toolbar, chat bar, user area */
+body.fancord-stealth .vc-header-bar-btns,
+body.fancord-stealth .vc-channel-toolbar-btns,
+body.fancord-stealth .vc-chat-bar-btns,
+body.fancord-stealth .vc-user-area-btns,
+
+/* Titlebar injected elements */
+body.fancord-stealth #fancord-titlebar-btn,
+body.fancord-stealth #fancord-titlebar-link-style,
+
+/* FancordAI nav button */
+body.fancord-stealth .nai-nav-item {
+    display: none !important;
+}
