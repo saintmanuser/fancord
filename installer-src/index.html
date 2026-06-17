@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Fancord Installer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"></noscript>
+  <style>
+    :root {
+      --bg:       #0f0f13;
+      --surface:  #18181f;
+      --border:   #2a2a38;
+      --accent:   #7c3aed;
+      --accent-h: #6d28d9;
+      --accent-glow: rgba(124,58,237,0.35);
+      --text:     #e8e6f0;
+      --muted:    #6b6980;
+      --success:  #22c55e;
+      --error:    #ef4444;
+      --warn:     #f59e0b;
+      --font:     'Inter', system-ui, sans-serif;
+    }
+
+    * { margin:0; padding:0; box-sizing:border-box; }
+
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      height: 100vh;
+      overflow: hidden;
+      user-select: none;
+      -webkit-app-region: no-drag;
+    }
+
+    body::before {
+      content:'';
+      position:fixed; inset:0;
+      background-image: radial-gradient(circle, rgba(124,58,237,0.06) 1px, transparent 1px);
+      background-size: 28px 28px;
+      pointer-events:none; z-index:0;
+    }
+
+    .shell {
+      position:relative; z-index:1;
+      display:flex; flex-direction:column;
+      height:100vh;
+    }
+
+    /* ── TITLEBAR ── */
+    .titlebar {
+      display:flex; align-items:center; justify-content:space-between;
+      padding: 0 16px;
+      height: 40px;
+      background: rgba(15,15,19,0.9);
+      border-bottom: 1px solid var(--border);
+      -webkit-app-region: drag;
+      backdrop-filter: blur(8px);
+      flex-shrink: 0;
+    }
+    .titlebar-left { display:flex; align-items:center; gap:8px; }
+    .titlebar-logo { width:20px; height:20px; object-fit:contain; }
+    .titlebar-title { font-size:12px; font-weight:600; color:var(--muted); letter-spacing:0.06em; text-transform:uppercase; }
+    .titlebar-tag {
+      font-size:9px; font-weight:700;
+      background:rgba(124,58,237,0.15); color:var(--accent);
+      border:1px solid rgba(124,58,237,0.3); border-radius:3px;
+      padding:2px 6px; letter-spacing:0.04em;
+    }
+    .titlebar-controls { display:flex; gap:7px; -webkit-app-region:no-drag; }
+    .titlebar-controls button {
+      width:12px; height:12px; border-radius:50%; border:none; cursor:pointer; transition:opacity .15s;
+    }
+    .titlebar-controls button:hover { opacity:.75; }
+    .btn-minimize { background:#febc2e; }
+    .btn-close    { background:#ff5f57; }
+
+    /* ── PAGES ── */
+    .pages {
+      flex:1;
+      display:flex; flex-direction:column;
+      overflow:hidden;
+    }
+
+    .page {
+      display:none;
+      flex-direction:column;
+      height:100%;
+      padding: 28px 32px 0;
+    }
+    .page.active { display:flex; }
+
+    .page-icon { font-size:22px; margin-bottom:6px; }
+    .page-title { font-size:20px; font-weight:800; color:var(--text); letter-spacing:-0.01em; }
+    .page-sub   { font-size:11px; color:var(--muted); margin-top:3px; }
+
+    .page-body {
+      flex:1;
+      overflow-y:auto;
+      margin-top:18px;
+      padding-right:4px;
+    }
+    .page-body::-webkit-scrollbar { width:4px; }
+    .page-body::-webkit-scrollbar-track { background:transparent; }
+    .page-body::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
+
+    /* ── FOOTER ── */
+    .page-footer {
+      display:flex; align-items:center; justify-content:space-between;
+      padding: 14px 0 18px;
+      border-top: 1px solid var(--border);
+      margin-top: 10px;
+      flex-shrink:0;
+    }
+    .footer-links { display:flex; gap:14px; }
+    .footer-link {
+      background:none; border:none; cursor:pointer;
+      color:var(--muted); font-size:12px; font-family:var(--font);
+      display:flex; align-items:center; gap:5px;
+      transition:color .15s;
+    }
+    .footer-link:hover { color:var(--text); }
+    .footer-link svg { width:14px; height:14px; flex-shrink:0; }
+
+    .footer-btns { display:flex; gap:10px; }
+
+    .btn {
+      padding: 8px 22px;
+      border-radius: 7px; border:none;
+      font-family: var(--font); font-size:13px; font-weight:600;
+      cursor:pointer; transition:all .15s;
+    }
+    .btn-ghost {
+      background:transparent; color:var(--muted);
+      border:1px solid var(--border);
+    }
+    .btn-ghost:hover { color:var(--text); border-color:var(--muted); }
+
+    .btn-primary {
+      background:var(--accent); color:#fff;
+      box-shadow: 0 2px 12px var(--accent-glow);
+    }
+    .btn-primary:not(:disabled):hover { background:var(--accent-h); box-shadow: 0 4px 20px var(--accent-glow); }
+    .btn-primary:disabled { opacity:.4; cursor:not-allowed; }
+
+    /* ── PAGE 1: LICENSE ── */
+    .license-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px 18px;
+      font-size: 11.5px;
+      line-height: 1.7;
+      color: #c8c6d8;
+      max-height: 270px;
+      overflow-y: auto;
+      user-select: text;
+    }
+    .license-box::-webkit-scrollbar { width:4px; }
+    .license-box::-webkit-scrollbar-track { background:transparent; }
+    .license-box::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
+    .license-box h3 { font-size:12px; font-weight:700; color:var(--text); margin-bottom:8px; }
+    .license-box p  { margin-bottom:8px; }
+
+    .accept-row {
+      display:flex; align-items:center; gap:10px;
+      margin-top:16px;
+      cursor:pointer;
+    }
+    .accept-row input[type=checkbox] { display:none; }
+    .checkbox {
+      width:18px; height:18px; border-radius:4px;
+      border:2px solid var(--border);
+      background:var(--surface);
+      display:flex; align-items:center; justify-content:center;
+      flex-shrink:0; transition:all .15s;
+    }
+    .checkbox.checked { background:var(--accent); border-color:var(--accent); }
+    .checkbox svg { display:none; }
+    .checkbox.checked svg { display:block; }
+    .accept-label { font-size:12.5px; font-weight:500; color:var(--text); }
+
+    /* ── PAGE 2: CHOOSE ACTION ── */
+    .action-list { display:flex; flex-direction:column; gap:8px; }
+
+    .action-item {
+      display:flex; align-items:center; gap:14px;
+      padding:14px 18px;
+      background:var(--surface);
+      border:1px solid var(--border);
+      border-radius:9px;
+      cursor:pointer;
+      transition:all .15s;
+    }
+    .action-item:hover { border-color:rgba(124,58,237,0.45); background:rgba(124,58,237,0.05); }
+    .action-item.selected { background:var(--accent); border-color:var(--accent); }
+    .action-item.selected .action-label { color:#fff; }
+    .action-item.selected .action-desc  { color:rgba(255,255,255,0.65); }
+
+    .action-icon { font-size:17px; flex-shrink:0; }
+    .action-text { flex:1; }
+    .action-label { font-size:13.5px; font-weight:700; color:var(--text); }
+    .action-desc  { font-size:10.5px; color:var(--muted); margin-top:2px; }
+
+    /* ── PAGE 3: CHOOSE DISCORD ── */
+    .discord-list { display:flex; flex-direction:column; gap:8px; }
+
+    .discord-item {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:12px 16px;
+      background:var(--surface);
+      border:1px solid var(--border);
+      border-radius:9px;
+      transition:all .15s;
+    }
+    .discord-item.found { cursor:pointer; }
+    .discord-item.found:hover { border-color:rgba(124,58,237,0.45); }
+    .discord-item.selected { border-color:var(--accent); background:rgba(124,58,237,0.08); }
+
+    .discord-item-left { display:flex; align-items:center; gap:12px; flex:1; min-width:0; }
+    .discord-icon {
+      width:34px; height:34px; border-radius:8px;
+      display:flex; align-items:center; justify-content:center;
+      flex-shrink:0;
+      background:rgba(124,58,237,0.1);
+    }
+    .discord-icon img { width:24px; height:24px; object-fit:contain; }
+    .discord-name { font-size:13px; font-weight:700; color:var(--text); }
+    .discord-path {
+      font-size:10px; color:var(--muted); margin-top:1px;
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:320px;
+    }
+
+    .discord-item-right { display:flex; align-items:center; gap:8px; flex-shrink:0; }
+
+    .btn-browse {
+      padding:5px 14px; border-radius:5px; border:none;
+      background:rgba(255,255,255,0.06); color:var(--text);
+      font-family:var(--font); font-size:11px; font-weight:600;
+      cursor:pointer; transition:background .15s;
+    }
+    .btn-browse:hover { background:rgba(255,255,255,0.11); }
+
+    .badge-version {
+      font-size:9px; font-weight:700; letter-spacing:.04em;
+      padding:2px 7px; border-radius:3px;
+      background:rgba(124,58,237,0.15); color:var(--accent);
+    }
+    .badge-injected {
+      font-size:9px; font-weight:700; letter-spacing:.04em;
+      padding:2px 7px; border-radius:3px;
+      background:rgba(34,197,94,0.15); color:var(--success);
+    }
+    .badge-warn {
+      font-size:9px; font-weight:700; letter-spacing:.04em;
+      padding:2px 7px; border-radius:3px;
+      background:rgba(245,158,11,0.15); color:var(--warn);
+    }
+
+    .manual-row {
+      display:flex; gap:8px; margin-top:8px;
+    }
+    .manual-input {
+      flex:1; background:var(--surface); border:1px solid var(--border);
+      border-radius:7px; padding:8px 12px; color:var(--text);
+      font-family:var(--font); font-size:11px; outline:none;
+      transition:border-color .15s;
+    }
+    .manual-input:focus { border-color:var(--accent); }
+    .manual-input::placeholder { color:var(--muted); }
+    .btn-manual-add {
+      padding:8px 16px; border-radius:7px; border:none;
+      background:var(--accent); color:#fff;
+      font-family:var(--font); font-size:11px; font-weight:700;
+      cursor:pointer; transition:background .15s;
+    }
+    .btn-manual-add:hover { background:var(--accent-h); }
+
+    .btn-add-manual-toggle {
+      display:inline-flex; align-items:center; gap:6px;
+      margin-top:12px; padding:6px 12px;
+      border-radius:6px; border:1px dashed var(--border);
+      background:transparent; color:var(--muted);
+      font-family:var(--font); font-size:11px; font-weight:600;
+      cursor:pointer; transition:all .15s;
+    }
+    .btn-add-manual-toggle:hover { color:var(--text); border-color:var(--accent); }
+
+    /* ── PAGE 4: INSTALLING ── */
+    .install-log {
+      background:var(--surface);
+      border:1px solid var(--border);
+      border-radius:8px;
+      padding:14px 16px;
+      font-size:11px;
+      font-family:'Courier New', monospace;
+      line-height:1.7;
+      color:#c8c6d8;
+      min-height:160px;
+      max-height:220px;
+      overflow-y:auto;
+    }
+    .install-log::-webkit-scrollbar { width:4px; }
+    .install-log::-webkit-scrollbar-track { background:transparent; }
+    .install-log::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
+
+    .log-line { display:flex; gap:8px; }
+    .log-line.ok   .log-icon { color:var(--success); }
+    .log-line.err  .log-icon { color:var(--error); }
+    .log-line.info .log-icon { color:var(--accent); }
+    .log-line.warn .log-icon { color:var(--warn); }
+    .log-icon { flex-shrink:0; }
+
+    .progress-wrap { margin-top:16px; }
+    .progress-header {
+      display:flex; justify-content:space-between; align-items:center;
+      margin-bottom:7px; font-size:11px; color:var(--muted);
+    }
+    .progress-label { font-weight:600; }
+    .progress-pct   { font-weight:700; color:var(--accent); }
+    .progress-track {
+      width:100%; height:6px; background:rgba(124,58,237,0.1);
+      border-radius:6px; overflow:hidden;
+    }
+    .progress-fill {
+      height:100%;
+      background:linear-gradient(90deg, var(--accent), #a855f7);
+      width:0%; border-radius:6px;
+      transition:width .35s ease;
+      box-shadow:0 0 10px var(--accent-glow);
+    }
+    .progress-sub {
+      margin-top:6px; font-size:10px; color:var(--muted); text-align:right;
+    }
+
+    .result-banner {
+      display:none;
+      align-items:center; gap:10px;
+      margin-top:16px; padding:12px 16px;
+      border-radius:8px; font-size:12.5px; font-weight:600;
+    }
+    .result-banner.visible { display:flex; }
+    .result-banner.success { background:rgba(34,197,94,0.1); border:1px solid rgba(34,197,94,0.3); color:var(--success); }
+    .result-banner.error   { background:rgba(239,68,68,0.1);  border:1px solid rgba(239,68,68,0.3);  color:var(--error); }
+    .result-banner .rb-icon { font-size:18px; }
+
+    /* ── DOTS LOADING ── */
+    .dots { display:inline-flex; gap:3px; vertical-align:middle; margin-left:4px; }
+    .dots span {
+      width:4px; height:4px; background:var(--accent); border-radius:50%;
+      animation:dotbounce 1.3s infinite ease-in-out both;
+    }
+    .dots span:nth-child(1){ animation-delay:-0.32s; }
+    .dots span:nth-child(2){ animation-delay:-0.16s; }
+    .dots span:nth-child(3){ animation-delay:0s; }
+    @keyframes dotbounce{0%,80%,100%{transform:scale(0)}40%{transform:scale(1)}}
+
+    /* ── PAGE TRANSITION ── */
+    @keyframes pageIn { from{opacity:0;transform:translateX(10px)}to{opacity:1;transform:none} }
+    .page.active { animation: pageIn .2s ease both; }
+  </style>
+</head>
+<body>
+<div class="shell">
+
+  <!-- TITLEBAR -->
+  <div class="titlebar">
+    <div class="titlebar-left">
+      <img src="{{ICON_BASE64}}" class="titlebar-logo" onerror="this.style.display='none'" />
+      <span class="titlebar-title">Fancord Installer</span>
+      <span class="titlebar-tag" id="titlebar-version">v2.0</span>
+    </div>
+    <div class="titlebar-controls">
+      <button class="btn-minimize" onclick="window.fancord.minimizeApp()"></button>
+      <button class="btn-close"    onclick="window.fancord.closeApp()"></button>
+    </div>
+  </div>
+
+  <div class="pages">
+
+    <!-- ══════════════════════════════════
+         PAGE 1 — LICENSE AGREEMENT
+    ══════════════════════════════════ -->
+    <div class="page active" id="page-license">
+      <div>
+        <div class="page-icon">🏛️</div>
+        <div class="page-title">License Agreement</div>
+        <div class="page-sub">End-User License Agreement for Fancord</div>
+      </div>
+
+      <div class="page-body">
+        <div class="license-box">
+          <h3>End-User License Agreement for Fancord</h3>
+          <p>PLEASE READ THIS AGREEMENT CAREFULLY. IT CONTAINS IMPORTANT TERMS THAT AFFECT YOU AND YOUR USE OF THE SOFTWARE. BY INSTALLING, COPYING OR USING THE SOFTWARE, YOU AGREE TO BE BOUND BY THE TERMS OF THIS AGREEMENT. IF YOU DO NOT AGREE TO THESE TERMS, DO NOT INSTALL, COPY, OR USE THE SOFTWARE.</p>
+          <p>This End-User License Agreement ("EULA") is a legal agreement between you (either an individual or a single entity) and the Fancord developers for the Fancord software product.</p>
+          <p><strong>1. GRANT OF LICENSE.</strong> Fancord grants you a non-exclusive, non-transferable license to install and use the software for personal, non-commercial purposes.</p>
+          <p><strong>2. RESTRICTIONS.</strong> You may not reverse engineer, decompile, or disassemble the software beyond what is permitted by applicable law. You may not rent, lease, or lend the software.</p>
+          <p><strong>3. DISCLAIMER.</strong> Fancord is a third-party modification and is NOT affiliated with, endorsed by, or officially supported by Discord Inc. Use at your own risk. The software is provided "as is" without warranty of any kind.</p>
+          <p><strong>4. TERMINATION.</strong> This license is effective until terminated. It will terminate automatically if you fail to comply with any term of this agreement.</p>
+          <p><strong>5. OPEN SOURCE.</strong> Fancord is based on open-source technology. Source code is available on GitHub under the respective licenses of its components.</p>
+        </div>
+
+        <label class="accept-row" for="accept-checkbox">
+          <input type="checkbox" id="accept-checkbox" onchange="toggleAccept()" />
+          <div class="checkbox" id="accept-visual">
+            <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
+              <path d="M1 4L3.8 7L9 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <span class="accept-label">I accept the license agreement.</span>
+        </label>
+      </div>
+
+      <div class="page-footer">
+        <div class="footer-links">
+          <button class="footer-link" onclick="openLink('discord')">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.27 5.33C17.94 4.71 16.5 4.26 15 4a.09.09 0 0 0-.07.03c-.18.33-.39.76-.53 1.09a16.09 16.09 0 0 0-4.8 0c-.14-.34-.35-.76-.54-1.09-.01-.02-.04-.03-.07-.03-1.5.26-2.93.71-4.27 1.33-.01 0-.02.01-.03.02-2.72 4.07-3.47 8.03-3.1 11.95 0 .02.01.04.03.05 1.8 1.32 3.53 2.12 5.24 2.65.03.01.06 0 .07-.02.4-.55.76-1.13 1.07-1.74.02-.04 0-.08-.04-.09-.57-.22-1.11-.48-1.64-.78-.04-.02-.04-.08-.01-.11.11-.08.22-.17.33-.25.02-.02.05-.02.07-.01 3.44 1.57 7.15 1.57 10.55 0 .02-.01.05-.01.07.01.11.09.22.17.33.26.04.03.04.09-.01.11-.52.31-1.07.56-1.64.78-.04.01-.05.06-.04.09.32.61.68 1.19 1.07 1.74.03.02.06.03.09.02 1.72-.53 3.45-1.33 5.25-2.65.02-.01.03-.03.03-.05.44-4.53-.73-8.46-3.1-11.95-.01-.01-.02-.02-.04-.02zM8.52 14.91c-1.03 0-1.89-.95-1.89-2.12s.84-2.12 1.89-2.12c1.06 0 1.9.96 1.89 2.12 0 1.17-.84 2.12-1.89 2.12zm6.97 0c-1.03 0-1.89-.95-1.89-2.12s.84-2.12 1.89-2.12c1.06 0 1.9.96 1.89 2.12 0 1.17-.84 2.12-1.89 2.12z"/></svg>
+            Discord
+          </button>
+          <button class="footer-link" onclick="openLink('github')">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.8 8.205 11.385.6.11.82-.26.82-.577v-2.17c-3.338.726-4.042-1.61-4.042-1.61-.546-1.387-1.333-1.757-1.333-1.757-1.09-.745.083-.73.083-.73 1.205.084 1.84 1.237 1.84 1.237 1.07 1.835 2.807 1.305 3.492.998.108-.775.42-1.305.763-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.467-2.38 1.235-3.22-.123-.303-.535-1.523.117-3.176 0 0 1.008-.322 3.3 1.23A11.5 11.5 0 0 1 12 6.8c.957.005 1.98.137 3 .403 2.29-1.552 3.297-1.23 3.297-1.23.653 1.653.24 2.873.118 3.176.77.84 1.233 1.91 1.233 3.22 0 4.61-2.803 5.625-5.475 5.92.43.37.823 1.102.823 2.222v3.293c0 .32.218.694.825.577C20.565 21.797 24 17.298 24 12c0-6.63-5.37-12-12-12z"/></svg>
+            GitHub
+          </button>
+          <button class="footer-link" onclick="openLink('website')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+            Website
+          </button>
+        </div>
+        <div class="footer-btns">
+          <button class="btn btn-primary" id="btn-license-next" disabled onclick="goPage(2)">Next</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════
+         PAGE 2 — CHOOSE ACTION
+    ══════════════════════════════════ -->
+    <div class="page" id="page-action">
+      <div>
+        <div class="page-icon">⚙️</div>
+        <div class="page-title">Choose an Action</div>
+        <div class="page-sub">What would you like to do?</div>
+      </div>
+
+      <div class="page-body">
+        <div class="action-list">
+          <div class="action-item selected" id="action-install" onclick="selectAction('install')">
+            <div class="action-icon">📥</div>
+            <div class="action-text">
+              <div class="action-label">Install Fancord</div>
+              <div class="action-desc">Download and inject Fancord into your Discord client</div>
+            </div>
+          </div>
+          <div class="action-item" id="action-repair" onclick="selectAction('repair')">
+            <div class="action-icon">🔧</div>
+            <div class="action-text">
+              <div class="action-label">Repair Fancord</div>
+              <div class="action-desc">Re-download and reinstall Fancord without changing your settings</div>
+            </div>
+          </div>
+          <div class="action-item" id="action-uninstall" onclick="selectAction('uninstall')">
+            <div class="action-icon">🗑️</div>
+            <div class="action-text">
+              <div class="action-label">Uninstall Fancord</div>
+              <div class="action-desc">Remove Fancord and restore Discord to its original state</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="page-footer">
+        <div class="footer-links"></div>
+        <div class="footer-btns">
+          <button class="btn btn-ghost" onclick="goPage(1)">Back</button>
+          <button class="btn btn-primary" onclick="goPage(3)">Next</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════
+         PAGE 3 — CHOOSE DISCORD VERSION
+    ══════════════════════════════════ -->
+    <div class="page" id="page-discord">
+      <div>
+        <div class="page-icon">🎮</div>
+        <div class="page-title">Choose Discord Version</div>
+        <div class="page-sub" id="page-discord-sub">Select the Discord installation to target.</div>
+      </div>
+
+      <div class="page-body">
+        <div class="discord-list" id="discord-list">
+          <div style="color:var(--muted);font-size:12px;display:flex;align-items:center;gap:6px;padding:8px 0;">
+            Searching<span class="dots"><span></span><span></span><span></span></span>
+          </div>
+        </div>
+
+        <button class="btn-add-manual-toggle" onclick="toggleManualRow()">+ Add manual path</button>
+        <div class="manual-row" id="manual-row" style="display:none;">
+          <input class="manual-input" id="manual-path" type="text"
+            placeholder="C:\Users\You\AppData\Local\Discord\app-1.0.9241\resources" />
+          <button class="btn-manual-add" onclick="addManualPath()">Add</button>
+        </div>
+      </div>
+
+      <div class="page-footer">
+        <div class="footer-links"></div>
+        <div class="footer-btns">
+          <button class="btn btn-ghost" onclick="goPage(2)">Back</button>
+          <button class="btn btn-primary" id="btn-discord-next" disabled onclick="startInstall()">
+            <span id="btn-discord-label">Install</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════
+         PAGE 4 — PROGRESS / RESULT
+    ══════════════════════════════════ -->
+    <div class="page" id="page-install">
+      <div>
+        <div class="page-icon" id="install-page-icon">📦</div>
+        <div class="page-title" id="install-page-title">Installing</div>
+        <div class="page-sub"   id="install-page-sub">Please wait...</div>
+      </div>
+
+      <div class="page-body">
+        <div class="install-log" id="install-log"></div>
+
+        <div class="progress-wrap">
+          <div class="progress-header">
+            <span class="progress-label" id="progress-label">Preparing...</span>
+            <span class="progress-pct"   id="progress-pct">0%</span>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill" id="progress-fill"></div>
+          </div>
+          <div class="progress-sub" id="progress-sub"></div>
+        </div>
+
+        <div class="result-banner" id="result-banner">
+          <span class="rb-icon" id="result-icon"></span>
+          <span id="result-text"></span>
+        </div>
+      </div>
+
+      <div class="page-footer">
+        <div class="footer-links"></div>
+        <div class="footer-btns">
+          <button class="btn btn-ghost"    id="btn-install-back"  onclick="goPage(3)" style="display:none;">Back</button>
+          <button class="btn btn-primary"  id="btn-install-close" onclick="window.fancord.closeApp()" style="display:none;">Close</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /pages -->
+</div><!-- /shell -->
+
+<script>
+  // ══════════════════════════════════════
+  //  STATE
+  // ══════════════════════════════════════
+  let currentPage     = 1;
+  let licenseAccepted = false;
+  let selectedAction  = 'install';
+  let discords        = [];
+  let selectedDiscord = null;
+  let discordsLoaded  = false;
+
+  const ICONS = {
+    'Discord':        '<img src="https://i.imgur.com/IvXl3Iq.png" />',
+    'Discord PTB':    '<img src="https://i.imgur.com/IvXl3Iq.png" />',
+    'Discord Canary': '<img src="https://i.imgur.com/QpoxYST.png" />',
+    'Discord Dev':    '<img src="https://i.imgur.com/QpoxYST.png" />',
+    'Manual':         '📁',
+  };
+
+  // ══════════════════════════════════════
+  //  NAVIGATION
+  // ══════════════════════════════════════
+  function goPage(n) {
+    document.getElementById('page-' + pageId(currentPage)).classList.remove('active');
+    currentPage = n;
+    const el = document.getElementById('page-' + pageId(n));
+    el.classList.add('active');
+
+    if (n === 3 && !discordsLoaded) {
+      loadDiscords();
+      discordsLoaded = true;
+    }
+    if (n === 3) updateDiscordPageLabels();
+  }
+
+  function pageId(n) {
+    return ['license','action','discord','install'][n - 1];
+  }
+
+  function updateDiscordPageLabels() {
+    const subMap = {
+      install:   'Select the Discord installation to inject Fancord into.',
+      repair:    'Select the Discord installation to repair Fancord on.',
+      uninstall: 'Select the Discord installation to remove Fancord from.',
+    };
+    const btnMap = { install:'Install', repair:'Repair', uninstall:'Uninstall' };
+    document.getElementById('page-discord-sub').textContent  = subMap[selectedAction];
+    document.getElementById('btn-discord-label').textContent = btnMap[selectedAction];
+  }
+
+  // ══════════════════════════════════════
+  //  PAGE 1 — LICENSE
+  // ══════════════════════════════════════
+  function toggleAccept() {
+    licenseAccepted = !licenseAccepted;
+    document.getElementById('accept-visual').classList.toggle('checked', licenseAccepted);
+    document.getElementById('btn-license-next').disabled = !licenseAccepted;
+  }
+
+  // ══════════════════════════════════════
+  //  PAGE 2 — ACTION
+  // ══════════════════════════════════════
+  function selectAction(action) {
+    selectedAction = action;
+    ['install','repair','uninstall'].forEach(a =>
+      document.getElementById('action-' + a).classList.toggle('selected', a === action)
+    );
+  }
+
+  // ══════════════════════════════════════
+  //  PAGE 3 — DISCORD DETECTION
+  // ══════════════════════════════════════
+  async function loadDiscords() {
+    const list = document.getElementById('discord-list');
+    list.innerHTML = '<div style="color:var(--muted);font-size:12px;display:flex;align-items:center;gap:6px;padding:8px 0;">Searching<span class="dots"><span></span><span></span><span></span></span></div>';
+
+    try {
+      const found = await window.fancord.detectDiscord();
+      discords = Array.isArray(found) ? found : [];
+    } catch(e) {
+      discords = [];
+    }
+
+    list.innerHTML = '';
+
+    if (discords.length === 0) {
+      list.innerHTML = '<div style="color:var(--muted);font-size:12px;padding:8px 0;">⚠ No Discord installations found. Use "Add manual path" below.</div>';
+      return;
+    }
+
+    for (let i = 0; i < discords.length; i++) {
+      await renderDiscordItem(i);
+    }
+  }
+
+  async function renderDiscordItem(i) {
+    const d = discords[i];
+    const list = document.getElementById('discord-list');
+
+    let injected = false, hasThirdParty = false;
+    try { injected       = await window.fancord.isInjected(d.path); } catch {}
+    if (!injected) {
+      try { hasThirdParty = await window.fancord.hasThirdPartyMod(d.path); } catch {}
+    }
+
+    const iconContent = ICONS[d.name] || '🎮';
+    const vBadge  = d.version ? `<span class="badge-version">v${d.version}</span>` : '';
+    const sBadge  = injected
+      ? `<span class="badge-injected">✓ injected</span>`
+      : hasThirdParty
+        ? `<span class="badge-warn">⚠ mod found</span>`
+        : '';
+
+    const item = document.createElement('div');
+    item.className = 'discord-item found';
+    item.dataset.index = i;
+    if (hasThirdParty && !injected) item.style.borderColor = 'rgba(245,158,11,0.3)';
+
+    item.innerHTML = `
+      <div class="discord-item-left">
+        <div class="discord-icon">${iconContent}</div>
+        <div>
+          <div class="discord-name">${esc(d.name)}</div>
+          <div class="discord-path">${esc(d.path)}</div>
+        </div>
+      </div>
+      <div class="discord-item-right">
+        ${vBadge}
+        ${sBadge}
+        <button class="btn-browse" onclick="openBrowse(${i},event)">Browse</button>
+      </div>`;
+
+    item.addEventListener('click', e => {
+      if (e.target.classList.contains('btn-browse')) return;
+      selectDiscordItem(i);
+    });
+    list.appendChild(item);
+  }
+
+  function selectDiscordItem(i) {
+    selectedDiscord = discords[i];
+    document.querySelectorAll('.discord-item').forEach(el => {
+      el.classList.toggle('selected', parseInt(el.dataset.index) === i);
+    });
+    document.getElementById('btn-discord-next').disabled = false;
+  }
+
+  function toggleManualRow() {
+    const row = document.getElementById('manual-row');
+    const visible = row.style.display !== 'none';
+    row.style.display = visible ? 'none' : 'flex';
+    if (!visible) document.getElementById('manual-path').focus();
+  }
+
+  async function addManualPath() {
+    const input = document.getElementById('manual-path');
+    const p = input.value.trim();
+    if (!p) return;
+    const entry = { name: 'Manual', path: p, version: '?' };
+    discords.push(entry);
+    const i = discords.length - 1;
+    await renderDiscordItem(i);
+    selectDiscordItem(i);
+    input.value = '';
+    document.getElementById('manual-row').style.display = 'none';
+  }
+
+  function openBrowse(i, e) {
+    e.stopPropagation();
+    // No native file dialog in WebView2 without extra C# — show manual row as fallback
+    document.getElementById('manual-row').style.display = 'flex';
+    document.getElementById('manual-path').focus();
+  }
+
+  // ══════════════════════════════════════
+  //  PAGE 4 — INSTALL / REPAIR / UNINSTALL
+  // ══════════════════════════════════════
+  function addLog(msg, type) {
+    type = type || 'info';
+    const log = document.getElementById('install-log');
+    const iconMap = { ok:'✅', err:'❌', info:'⬇', warn:'⚠️' };
+    const line = document.createElement('div');
+    line.className = 'log-line ' + type;
+    line.innerHTML = `<span class="log-icon">${iconMap[type] || '•'}</span><span>${esc(msg)}</span>`;
+    log.appendChild(line);
+    log.scrollTop = log.scrollHeight;
+  }
+
+  function setProgressUI(pct, label, mbDl, mbTotal) {
+    document.getElementById('progress-fill').style.width = Math.min(pct, 100) + '%';
+    document.getElementById('progress-pct').textContent  = Math.round(pct) + '%';
+    if (label) document.getElementById('progress-label').textContent = label;
+    document.getElementById('progress-sub').textContent =
+      (mbDl != null && mbTotal != null)
+        ? mbDl.toFixed(1) + ' / ' + mbTotal.toFixed(1) + ' MB'
+        : '';
+  }
+
+  // Called by C# ExecuteScriptAsync
+  function setLoading(visible, text, pct, mbDl, mbTotal) {
+    if (text) addLog(text, 'info');
+    if (pct != null) setProgressUI(pct, text, mbDl != null ? mbDl : null, mbTotal != null ? mbTotal : null);
+  }
+
+  // Called by C# ExecuteScriptAsync
+  function setStatus(type, text) {
+    const map = { loading:'info', success:'ok', error:'err', idle:'info' };
+    addLog(text, map[type] || 'info');
+  }
+
+  async function startInstall() {
+    if (!selectedDiscord) return;
+
+    const titleMap = { install:'Installing',  repair:'Repairing',  uninstall:'Uninstalling' };
+    const subMap   = {
+      install:   'Please wait while Fancord is installed...',
+      repair:    'Re-downloading and reinstalling Fancord...',
+      uninstall: 'Removing Fancord from Discord...',
+    };
+    const iconMap  = { install:'📦', repair:'🔧', uninstall:'🗑️' };
+
+    document.getElementById('install-page-icon').textContent  = iconMap[selectedAction];
+    document.getElementById('install-page-title').textContent = titleMap[selectedAction];
+    document.getElementById('install-page-sub').textContent   = subMap[selectedAction];
+    document.getElementById('install-log').innerHTML = '';
+    document.getElementById('result-banner').className = 'result-banner';
+    document.getElementById('btn-install-back').style.display  = 'none';
+    document.getElementById('btn-install-close').style.display = 'none';
+    setProgressUI(0, 'Starting...', null, null);
+
+    goPage(4);
+
+    addLog('Local AppData directory prepared', 'ok');
+
+    // ── UNINSTALL ──
+    if (selectedAction === 'uninstall') {
+      addLog('Uninjecting Fancord from ' + selectedDiscord.name + '...', 'info');
+      try {
+        const result = await window.fancord.uninject(selectedDiscord.path);
+        if (result && result.success) {
+          setProgressUI(100, 'Done!');
+          addLog('Fancord removed successfully.', 'ok');
+          showResult(true, '✓ Fancord uninstalled from ' + selectedDiscord.name + '. Discord is restarting.');
+        } else {
+          const err = (result && result.error) || 'Unknown error';
+          addLog(err, 'err');
+          showResult(false, err);
+        }
+      } catch(e) {
+        addLog(String(e), 'err');
+        showResult(false, String(e));
+      }
+      return;
+    }
+
+    // ── INSTALL / REPAIR ──
+    addLog('Downloading Fancord package...', 'info');
+    addLog('Fetching latest release information from GitHub...', 'info');
+
+    let started;
+    try {
+      started = window.fancord.startInject(selectedDiscord.path);
+    } catch(e) {
+      addLog(String(e), 'err');
+      showResult(false, String(e));
+      return;
+    }
+
+    if (!started || !started.started) {
+      const err = (started && started.error) || 'Could not start installation';
+      addLog(err, 'err');
+      showResult(false, err);
+      return;
+    }
+
+    // Poll every 400ms for completion
+    const final = await new Promise(resolve => {
+      const iv = setInterval(() => {
+        try {
+          const status = window.fancord.getInjectStatus();
+          if (status.state === 'done') {
+            clearInterval(iv);
+            resolve({ success: true });
+          } else if (status.state === 'error') {
+            clearInterval(iv);
+            resolve({ success: false, error: status.error });
+          }
+          // 'running' → keep polling (C# calls setLoading/setStatus to update UI)
+        } catch(e) {
+          clearInterval(iv);
+          resolve({ success: false, error: String(e) });
+        }
+      }, 400);
+    });
+
+    if (final.success) {
+      setProgressUI(100, 'Done!');
+      addLog('Fancord installed successfully. Discord is restarting...', 'ok');
+      showResult(true, '✓ Fancord injected into ' + selectedDiscord.name + '! Discord is restarting.');
+    } else {
+      addLog((final.error || 'Installation failed'), 'err');
+      showResult(false, final.error || 'Installation failed');
+    }
+  }
+
+  function showResult(success, msg) {
+    const banner = document.getElementById('result-banner');
+    banner.className = 'result-banner visible ' + (success ? 'success' : 'error');
+    document.getElementById('result-icon').textContent = success ? '✅' : '❌';
+    document.getElementById('result-text').textContent = msg;
+    if (!success) document.getElementById('btn-install-back').style.display = 'block';
+    document.getElementById('btn-install-close').style.display = 'block';
+  }
+
+  // ══════════════════════════════════════
+  //  HELPERS
+  // ══════════════════════════════════════
+  function esc(s) {
+    return String(s)
+      .replace(/&/g,'&amp;')
+      .replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;');
+  }
+
+  function openLink(type) {
+    const urls = {
+      discord: 'https://discord.gg/fancord',
+      github:  'https://github.com/fancordoff/fancord',
+      website: 'https://fancord.online',
+    };
+    if (window.fancord && urls[type]) window.fancord.openUrl(urls[type]);
+  }
+
+  async function loadVersion() {
+    try {
+      const res = await fetch('https://api.github.com/repos/fancordoff/fancord/releases/latest', {
+        headers: { 'Accept': 'application/vnd.github.v3+json' }
+      });
+      if (!res.ok) return;
+      const data = await res.json();
+      if (data.tag_name) document.getElementById('titlebar-version').textContent = data.tag_name;
+    } catch {}
+  }
+
+  loadVersion();
+</script>
+</body>
+</html>
