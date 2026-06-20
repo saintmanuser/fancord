@@ -5,6 +5,7 @@
  */
 
 import { addContextMenuPatch, NavContextMenuPatchCallback, removeContextMenuPatch } from "@api/ContextMenu";
+import { get as dsGet, set as dsSet } from "@api/DataStore";
 import { Modals, openModal } from "@utils/modal";
 import definePlugin from "@utils/types";
 import { RelationshipType } from "@vencord/discord-types/enums";
@@ -13,15 +14,37 @@ import { ChannelStore, FluxDispatcher, GuildMemberStore, Menu, React, Relationsh
 
 const DS_KEY = "FakeFriends_state";
 
-// fakeState is in memory only — does NOT persist across restarts
+// fakeState is kept in memory and mirrored to IndexedDB via DataStore so it
+// survives client restarts / reloads.
 const fakeState = new Map<string, "pending" | "accepted">();
 
+type PersistedEntry = [string, "pending" | "accepted"];
+
 async function persistState() {
-    // No persistence — fakeState reset on restart intentionally
+    try {
+        const serialized: PersistedEntry[] = [...fakeState.entries()];
+        await dsSet(DS_KEY, serialized);
+    } catch (e) {
+        console.error("[FakeFriends] Failed to persist state:", e);
+    }
 }
 
 async function loadState() {
-    // No loading at startup — fakeState starts empty
+    try {
+        const saved = await dsGet<PersistedEntry[]>(DS_KEY);
+        if (!Array.isArray(saved)) return;
+
+        fakeState.clear();
+        for (const entry of saved) {
+            if (!Array.isArray(entry) || entry.length !== 2) continue;
+            const [id, state] = entry;
+            if (typeof id !== "string") continue;
+            if (state !== "pending" && state !== "accepted") continue;
+            fakeState.set(id, state);
+        }
+    } catch (e) {
+        console.error("[FakeFriends] Failed to load state:", e);
+    }
 }
 
 const FAKE_DM_PHRASES = [
@@ -118,6 +141,48 @@ function unpatchAcceptFriend() {
         const RA = findByProps("acceptFriend", "addFriend") as any;
         if (RA) RA.acceptFriend = origAccept;
         origAccept = null;
+    } catch { }
+}
+
+// ── Patch removal (decline / cancel / unfriend) ───────────────────────────────
+// Discord's "X" button on a received request, "cancel" on a sent request, and
+// "remove friend" all eventually call one of these. Without intercepting them,
+// declining a fake request never touches fakeState, so our store patches keep
+// re-injecting it on the next render — the entry "comes back".
+const REMOVE_FN_CANDIDATES = [
+    "removeRelationship", "removeFriend", "deleteRelationship",
+    "ignoreFriendRequest", "cancelFriendRequest", "unfriend",
+];
+const origRemoveFns = new Map<string, Function>();
+
+function patchRemoveRelationship() {
+    try {
+        const RA = findByProps("acceptFriend", "addFriend") as any;
+        if (!RA) return;
+        for (const name of REMOVE_FN_CANDIDATES) {
+            if (typeof RA[name] !== "function" || origRemoveFns.has(name)) continue;
+            const orig = RA[name];
+            origRemoveFns.set(name, orig);
+            RA[name] = async function (userId: string, ...args: any[]) {
+                if (fakeState.has(userId)) {
+                    fakeState.delete(userId);
+                    await persistState();
+                    FluxDispatcher.dispatch({ type: "RELATIONSHIP_REMOVE", relationship: { id: userId } });
+                    return;
+                }
+                return orig.call(this, userId, ...args);
+            };
+        }
+    } catch (e) { console.warn("[FF] patchRemoveRelationship:", e); }
+}
+
+function unpatchRemoveRelationship() {
+    try {
+        const RA = findByProps("acceptFriend", "addFriend") as any;
+        for (const [name, orig] of origRemoveFns) {
+            if (RA) RA[name] = orig;
+        }
+        origRemoveFns.clear();
     } catch { }
 }
 
@@ -560,12 +625,12 @@ function getGuildCandidates(guildId: string): string[] {
 
 // ── Fake Friend Request avec saisie du nombre ─────────────────────────────────
 async function floodGuild(guildId: string) {
-    Toasts.show({ message: "Chargement des membres...", type: Toasts.Type.MESSAGE, id: "ff-loading" });
+    Toasts.show({ message: "Finding members...", type: Toasts.Type.MESSAGE, id: "ff-loading" });
     await fetchAllGuildMembers(guildId);
 
     const candidates = getGuildCandidates(guildId);
     if (!candidates.length) {
-        Toasts.show({ message: "Aucun candidat disponible", type: Toasts.Type.FAILURE, id: Toasts.genId() });
+        Toasts.show({ message: "No available members", type: Toasts.Type.FAILURE, id: Toasts.genId() });
         return;
     }
 
@@ -615,7 +680,7 @@ async function removeFakeFriendsForGuild(guildId: string) {
 async function fakeMessageRequestGuild(guildId: string) {
     const candidates = getGuildCandidates(guildId);
     if (!candidates.length) {
-        Toasts.show({ message: "No candidates available", type: Toasts.Type.FAILURE, id: Toasts.genId() });
+        Toasts.show({ message: "No available members", type: Toasts.Type.FAILURE, id: Toasts.genId() });
         return;
     }
 
@@ -884,6 +949,7 @@ export default definePlugin({
         patchStore();
         patchChannelStore();
         patchAcceptFriend();
+        patchRemoveRelationship();
         patchMessageRequestStore();
         addContextMenuPatch("user-context", userContextPatch);
         addContextMenuPatch("guild-context", guildContextPatch);
@@ -900,6 +966,7 @@ export default definePlugin({
         removeContextMenuPatch("user-context", userContextPatch);
         removeContextMenuPatch("guild-context", guildContextPatch);
         unpatchAcceptFriend();
+        unpatchRemoveRelationship();
         // On ne clear pas fakeState au stop — persistant intentionnellement
         // Pour reset : clic Reset dans le plugin ou "Remove fake friend requests"
         unpatchStore();
