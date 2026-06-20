@@ -36,7 +36,7 @@ const KNOWN_PLUGINS_KEY = "EquicordChangelog_KnownPlugins";
 const KNOWN_SETTINGS_KEY = "EquicordChangelog_KnownSettings";
 const LAST_REPO_CHECK_KEY = "EquicordChangelog_LastRepoCheck";
 const GITHUB_COMPARE_ENDPOINT = "https://api.github.com/repos";
-const FANCORD_RELEASES_REPO = "fancordoff/fancord";
+const FANCORD_RELEASES_REPO = "saintmanuser/fancord";
 const FANCORD_REPO_URL = `https://github.com/${FANCORD_RELEASES_REPO}`;
 
 type KnownPluginSettingsMap = Map<string, Set<string>>;

@@ -1,58 +1,64 @@
 {
   "585477929174302731": [
-    {
+   {
       "badge": "https://i.ibb.co/twjNFc00/dvgfcu-W.png",
       "tooltip": "Developer of FanCord",
       "auto": true
     },
     {
-      "badge": "https://i.ibb.co/Z6BjWX8W/v-VTYtji.png",
-      "tooltip": "Helper FanCord",
-      "auto": true
+      "badge": "https://i.ibb.co/QjNFLVC4/8u-ORtt-L.png",
+      "tooltip": "Audio Developer"
+    },
+    {
+      "badge": "https://i.ibb.co/GQgtt5St/NHI5sp-S.png",
+      "tooltip": "OG"
+    },
+    {
+      "badge": "https://i.ibb.co/spm1RCVc/download-8.png",
+      "tooltip": "Bit boy"
+    },
+    {  
+      "badge": "https://i.ibb.co/wh9BZ61t/4h-Ld-Fn-O.png",
+      "tooltip": "eth boy"
     },
     {
       "badge": "https://i.ibb.co/Wp7TW0py/download-4.png",
       "tooltip": "Owner FanCord"
     },
     {
-      "badge": "https://i.ibb.co/Gv2FPx84/itachi42.gif",
-      "tooltip": "Saint"
-    },
-    {
-      "badge": "https://i.ibb.co/HD0S5yrx/5275-lightblue-verification.gif",
+      "badge": "https://i.ibb.co/fY0dsgPp/download-7.png",
       "tooltip": "Verified"
-    },
-    {
-      "badge": "https://i.ibb.co/d825Bnq/1343962534797119530.webp",
-      "tooltip": "BOT"
     }
   ],
   "1137719717038149642": [
-    {
+   {
       "badge": "https://i.ibb.co/twjNFc00/dvgfcu-W.png",
       "tooltip": "Developer of FanCord",
       "auto": true
     },
     {
-      "badge": "https://i.ibb.co/Z6BjWX8W/v-VTYtji.png",
-      "tooltip": "Helper FanCord",
-      "auto": true
+      "badge": "https://i.ibb.co/QjNFLVC4/8u-ORtt-L.png",
+      "tooltip": "Audio Developer"
+    },
+    {
+      "badge": "https://i.ibb.co/GQgtt5St/NHI5sp-S.png",
+      "tooltip": "OG"
+    },
+    {
+      "badge": "https://i.ibb.co/spm1RCVc/download-8.png",
+      "tooltip": "Bit boy"
+    },
+    {  
+      "badge": "https://i.ibb.co/wh9BZ61t/4h-Ld-Fn-O.png",
+      "tooltip": "eth boy"
     },
     {
       "badge": "https://i.ibb.co/Wp7TW0py/download-4.png",
       "tooltip": "Owner FanCord"
     },
     {
-      "badge": "https://i.ibb.co/Gv2FPx84/itachi42.gif",
-      "tooltip": "Saint"
-    },
-    {
-      "badge": "https://i.ibb.co/HD0S5yrx/5275-lightblue-verification.gif",
+      "badge": "https://i.ibb.co/fY0dsgPp/download-7.png",
       "tooltip": "Verified"
-    },
-    {
-      "badge": "https://i.ibb.co/d825Bnq/1343962534797119530.webp",
-      "tooltip": "BOT"
     }
   ],
   "1432190474210508902": [
@@ -66,12 +72,8 @@
       "tooltip": "Owner FanCord"
     },
     {
-      "badge": "https://i.ibb.co/HD0S5yrx/5275-lightblue-verification.gif",
+      "badge": "https://i.ibb.co/fY0dsgPp/download-7.png",
       "tooltip": "Verified"
-    },
-    {
-      "badge": "https://i.ibb.co/d825Bnq/1343962534797119530.webp",
-      "tooltip": "BOT"
     }
   ]
 }
