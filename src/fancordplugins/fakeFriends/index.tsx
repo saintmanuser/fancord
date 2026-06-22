@@ -64,6 +64,7 @@ let origGetRelType: Function | null = null;
 let origIsFriend: Function | null = null;
 let origGetFriendIDs: Function | null = null;
 let origGetMutable: Function | null = null;
+let origGetPendingCount: Function | null = null;
 
 function patchStore() {
     const store = RelationshipStore as any;
@@ -102,6 +103,14 @@ function patchStore() {
             return real;
         };
     }
+    if (!origGetPendingCount && typeof store.getPendingCount === "function") {
+        origGetPendingCount = store.getPendingCount;
+        store.getPendingCount = function () {
+            const real = origGetPendingCount!.call(this) ?? 0;
+            const extra = [...fakeState.values()].filter(s => s === "pending").length;
+            return real + extra;
+        };
+    }
 }
 
 function unpatchStore() {
@@ -110,6 +119,7 @@ function unpatchStore() {
     if (origIsFriend) { store.isFriend = origIsFriend; origIsFriend = null; }
     if (origGetFriendIDs) { store.getFriendIDs = origGetFriendIDs; origGetFriendIDs = null; }
     if (origGetMutable) { store.getMutableRelationships = origGetMutable; origGetMutable = null; }
+    if (origGetPendingCount) { store.getPendingCount = origGetPendingCount; origGetPendingCount = null; }
 }
 
 // ── Patch acceptFriend ─────────────────────────────────────────────────────────
@@ -145,10 +155,6 @@ function unpatchAcceptFriend() {
 }
 
 // ── Patch removal (decline / cancel / unfriend) ───────────────────────────────
-// Discord's "X" button on a received request, "cancel" on a sent request, and
-// "remove friend" all eventually call one of these. Without intercepting them,
-// declining a fake request never touches fakeState, so our store patches keep
-// re-injecting it on the next render — the entry "comes back".
 const REMOVE_FN_CANDIDATES = [
     "removeRelationship", "removeFriend", "deleteRelationship",
     "ignoreFriendRequest", "cancelFriendRequest", "unfriend",
@@ -242,7 +248,6 @@ async function addPendingRequest(user: any) {
 }
 
 // ── Reapplying fakeStates at startup ──────────────────────────────────
-// After reload, we redispatch all saved states
 async function reapplyFakeStates() {
     for (const [userId, state] of fakeState) {
         try {
@@ -487,7 +492,6 @@ async function doFakeFriendRequest(userId: string) {
     await addPendingRequest(user);
 }
 
-// ── Modal React pour saisir un nombre ─────────────────────────────────────────────
 function askCount(title: string, max: number): Promise<number | null> {
     return new Promise(resolve => {
         const resolveRef = { current: resolve, done: false };
@@ -523,7 +527,7 @@ function askCount(title: string, max: number): Promise<number | null> {
                     <Modals.ModalContent style={{ padding: "16px 20px" }}>
                         <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                             <label style={{ fontSize: 12, fontWeight: 600, color: "#fff", textTransform: "uppercase", letterSpacing: ".04em" }}>
-                                Nombre (max {max})
+                                Quantity (max {max})
                             </label>
                             <input
                                 autoFocus
@@ -581,7 +585,6 @@ function askCount(title: string, max: number): Promise<number | null> {
     });
 }
 
-// ── Candidats d'un serveur ────────────────────────────────────────────────────
 async function fetchAllGuildMembers(guildId: string): Promise<void> {
     const queries = [
         ..."abcdefghijklmnopqrstuvwxyz0123456789".split(""),
@@ -623,7 +626,6 @@ function getGuildCandidates(guildId: string): string[] {
     });
 }
 
-// ── Fake Friend Request avec saisie du nombre ─────────────────────────────────
 async function floodGuild(guildId: string) {
     Toasts.show({ message: "Finding members...", type: Toasts.Type.MESSAGE, id: "ff-loading" });
     await fetchAllGuildMembers(guildId);
@@ -656,7 +658,6 @@ async function floodGuild(guildId: string) {
     Toasts.show({ message: `${sent} fake friend request${sent > 1 ? "s" : ""} sent!`, type: Toasts.Type.SUCCESS, id: Toasts.genId() });
 }
 
-// ── Remove fake requests pour un serveur ──────────────────────────────────────
 async function removeFakeFriendsForGuild(guildId: string) {
     const memberIds = new Set<string>(GuildMemberStore.getMemberIds(guildId) as string[]);
     const toRemove = [...fakeState.keys()].filter(id => memberIds.has(id));
@@ -676,7 +677,6 @@ async function removeFakeFriendsForGuild(guildId: string) {
     Toasts.show({ message: `${toRemove.length} fake request${toRemove.length > 1 ? "s" : ""} removed!`, type: Toasts.Type.SUCCESS, id: Toasts.genId() });
 }
 
-// ── Fake Message Request ─────────────────────────────────────────────────────
 async function fakeMessageRequestGuild(guildId: string) {
     const candidates = getGuildCandidates(guildId);
     if (!candidates.length) {
@@ -847,7 +847,6 @@ async function sendIncomingMessageRequest(user: any) {
     });
 }
 
-// ── Context menus ──────────────────────────────────────────────────────────────
 const userContextPatch: NavContextMenuPatchCallback = (children, props) => {
     if (!children || !Array.isArray(children)) return;
     try {
@@ -906,7 +905,6 @@ const guildContextPatch: NavContextMenuPatchCallback = (children, props) => {
         const guildId = props?.guild?.id ?? props?.guildId;
         if (!guildId) return;
 
-        // Compter combien de fake states concernent ce serveur
         const memberIds = new Set<string>(GuildMemberStore.getMemberIds(guildId) as string[]);
         const fakeCount = [...fakeState.keys()].filter(id => memberIds.has(id)).length;
 
@@ -915,7 +913,6 @@ const guildContextPatch: NavContextMenuPatchCallback = (children, props) => {
                 action={() => floodGuild(guildId)} />
         ];
 
-        // Bouton "Remove fake friend requests" — visible seulement si des fakes existent pour ce serveur
         if (fakeCount > 0) {
             items.push(
                 <Menu.MenuItem
@@ -937,7 +934,6 @@ const guildContextPatch: NavContextMenuPatchCallback = (children, props) => {
     }
 };
 
-// ── Plugin ─────────────────────────────────────────────────────────────────────
 export default definePlugin({
     name: "FakeFriends",
     enabledByDefault: true,
@@ -954,10 +950,8 @@ export default definePlugin({
         addContextMenuPatch("user-context", userContextPatch);
         addContextMenuPatch("guild-context", guildContextPatch);
 
-        // Charger l'état persistant puis réappliquer les dispatches
         await loadState();
         if (fakeState.size > 0) {
-            // Délai pour laisser Discord se charger complètement
             setTimeout(() => reapplyFakeStates(), 3000);
         }
     },
@@ -967,8 +961,6 @@ export default definePlugin({
         removeContextMenuPatch("guild-context", guildContextPatch);
         unpatchAcceptFriend();
         unpatchRemoveRelationship();
-        // On ne clear pas fakeState au stop — persistant intentionnellement
-        // Pour reset : clic Reset dans le plugin ou "Remove fake friend requests"
         unpatchStore();
         unpatchChannelStore();
     },

@@ -29,7 +29,6 @@ const LS_ALL_ENABLED = "FancordCP_allEnabled";
 const FONT_STYLE_ID = "cp-display-name-font";
 const HIDE_STYLE_ID = "cp-hide-during-load";
 const NOTIFICATION_ID = "cp-load-notification";
-const LIKES_API = "https://fancord-likes.vercel.app/api";
 
 // ─── STARTUP DELAYS ───────────────────────────────────────────────────────────
 const STARTUP_DELAYS = [300, 750, 1500, 3000, 6000, 12000];
@@ -153,6 +152,51 @@ function getFontFamilyById(fontId: number): string { return DISPLAY_NAME_FONTS.f
 function getFontWeightById(fontId: number): number  { return DISPLAY_NAME_FONTS.find(f => f.fontId === fontId)?.weight ?? 700; }
 function getFontItalicById(fontId: number): boolean { return DISPLAY_NAME_FONTS.find(f => f.fontId === fontId)?.italic ?? false; }
 
+// ─── SERVER TAG ICONS ─────────────────────────────────────────────────────────
+const SERVER_TAG_ICONS = [
+    { id: "none",      label: "None",         emoji: "" },
+    { id: "gaming",    label: "Gaming",        emoji: "🎮" },
+    { id: "music",     label: "Music",         emoji: "🎵" },
+    { id: "art",       label: "Art",           emoji: "🎨" },
+    { id: "coding",    label: "Coding",        emoji: "💻" },
+    { id: "anime",     label: "Anime",         emoji: "⛩️" },
+    { id: "science",   label: "Science",       emoji: "🔬" },
+    { id: "sports",    label: "Sports",        emoji: "⚽" },
+    { id: "food",      label: "Food",          emoji: "🍕" },
+    { id: "travel",    label: "Travel",        emoji: "✈️" },
+    { id: "books",     label: "Books",         emoji: "📚" },
+    { id: "movies",    label: "Movies",        emoji: "🎬" },
+    { id: "crypto",    label: "Crypto",        emoji: "₿" },
+    { id: "fitness",   label: "Fitness",       emoji: "💪" },
+    { id: "nature",    label: "Nature",        emoji: "🌿" },
+    { id: "robot",     label: "Robot",         emoji: "🤖" },
+    { id: "star",      label: "Star",          emoji: "⭐" },
+    { id: "fire",      label: "Fire",          emoji: "🔥" },
+    { id: "crown",     label: "Crown",         emoji: "👑" },
+    { id: "sword",     label: "Sword",         emoji: "⚔️" },
+    { id: "shield",    label: "Shield",        emoji: "🛡️" },
+    { id: "lightning", label: "Lightning",     emoji: "⚡" },
+    { id: "heart",     label: "Heart",         emoji: "❤️" },
+    { id: "diamond",   label: "Diamond",       emoji: "💎" },
+    { id: "ghost",     label: "Ghost",         emoji: "👻" },
+    { id: "alien",     label: "Alien",         emoji: "👾" },
+    { id: "dragon",    label: "Dragon",        emoji: "🐉" },
+    { id: "skull",     label: "Skull",         emoji: "💀" },
+    { id: "rainbow",   label: "Rainbow",       emoji: "🌈" },
+    { id: "moon",      label: "Moon",          emoji: "🌙" },
+    { id: "sun",       label: "Sun",           emoji: "☀️" },
+    { id: "uk",        label: "UK",            emoji: "🇬🇧" },
+    { id: "us",        label: "US",            emoji: "🇺🇸" },
+    { id: "jp",        label: "Japan",         emoji: "🇯🇵" },
+    { id: "fr",        label: "France",        emoji: "🇫🇷" },
+    { id: "de",        label: "Germany",       emoji: "🇩🇪" },
+    { id: "flip",      label: "FLIP",          emoji: "💰" },
+    { id: "roblox",    label: "Roblox",        emoji: "🧱" },
+    { id: "mc",        label: "Minecraft",     emoji: "⛏️" },
+    { id: "cat",       label: "Cat",           emoji: "🐱" },
+    { id: "dog",       label: "Dog",           emoji: "🐶" },
+];
+
 // ─── AVATAR DECORATIONS ───────────────────────────────────────────────────────
 const AVATAR_DECORATIONS = [
     { id: "1309668861704146984", label: "Study Session",            asset: "a_28fbe43ba1ee217576dee69712bbb628" },
@@ -204,8 +248,8 @@ function getDecorationUrl(asset: string): string {
 // ─── NAMEPLATES ───────────────────────────────────────────────────────────────
 const NAMEPLATES = [
     { skuId: "1511102779819687956", label: "United States",         thumbnail: "nameplates/united_states/1511102779819687956/static.png",           emoji: "🇺🇸"  },
-    { skuId: "1511107752762544188", label: "England",               thumbnail: "nameplates/england/1511107752762544188/static.png",                 emoji: "🏴󠁧󠁢󠁥󠁮󠁧󠁿" },
-    { skuId: "1511110083675688960", label: "Scotland",              thumbnail: "nameplates/scotland/1511110083675688960/static.png",                emoji: "🏴󠁧󠁢󠁳󠁣󠁴󠁿" },
+    { skuId: "1511107752762544188", label: "England",               thumbnail: "nameplates/england/1511107752762544188/static.png",                 emoji: "🏴" },
+    { skuId: "1511110083675688960", label: "Scotland",              thumbnail: "nameplates/scotland/1511110083675688960/static.png",                emoji: "🏴" },
     { skuId: "1511108725333823568", label: "Germany",               thumbnail: "nameplates/germany/1511108725333823568/static.png",                 emoji: "🇩🇪"  },
     { skuId: "1428438925021548544", label: "Yuji Itadori",          thumbnail: "nameplates/yuji_itadori/1428438925021548544/static.png",            emoji: "🥊"  },
     { skuId: "1428438925046714408", label: "Gojo",                  thumbnail: "nameplates/gojo/1428438925046714408/static.png",                   emoji: "👁️" },
@@ -297,6 +341,8 @@ interface CustomProfileData {
     oldName?: string; decorationAsset?: string; nameplateSkuId?: string;
     profileEffectId?: string; copiedUserId?: string; displayNameFont?: number;
     displayNameEffect?: string; displayNameColor?: string; displayNameColor2?: string;
+    // Fake server tag
+    serverTagText?: string; serverTagIconId?: string;
 }
 
 let storedData: CustomProfileData = {};
@@ -859,25 +905,47 @@ function stopDomObserver() {
 }
 
 // ─── FORCE RERENDER ───────────────────────────────────────────────────────────
-function forceAccountPanelRerender() {
+function forceFullRerender() {
     try {
         const WP = (Vencord as any).Webpack;
-        WP?.findByStoreName("UserStore")?.emitChange?.();
-        WP?.findByStoreName("UserProfileStore")?.emitChange?.();
-        WP?.findByProps?.("getUsers","getValidUsers","getHasLoggedInAccounts")?.emitChange?.();
-        FluxDispatcher.dispatch({ type: "USER_SETTINGS_PROTO_UPDATE", settings: { type: 1, proto: {} } });
+
+        // Invalidate all caches so the next read recomputes from storedData
+        cachedFakeUser = null;
+        cachedOriginalUser = null;
+        _dataVersion++;
+
+        // Invalidate the plugin's own profile-merge cache (hookUserProfile)
+        try { (Vencord as any).Plugins?.plugins?.CustomProfile?.invalidateProfileCache?.(); } catch { }
+
+        // Let every store that reads user/profile data know something changed.
+        // emitChange() just re-triggers connected React components to re-read
+        // from the store via their selectors — it does NOT clear any caches
+        // by itself, which is why the cache invalidation above must happen first.
+        try { WP?.findByStoreName?.("UserStore")?.emitChange?.(); } catch { }
+        try { WP?.findByStoreName?.("UserProfileStore")?.emitChange?.(); } catch { }
+        try { WP?.findByProps?.("getUsers","getValidUsers","getHasLoggedInAccounts")?.emitChange?.(); } catch { }
+
+        // Nudge UserProfileStore / AccountPanel / popouts that listen for
+        // USER_UPDATE by re-dispatching it with the (already patched)
+        // current user. We deliberately do NOT touch user settings protos
+        // or dispatch fake USER_PROFILE_UPDATE/CURRENT_USER_UPDATE actions —
+        // those mutate real client state and were causing unrelated UI
+        // (e.g. the sidebar) to flash on every save.
         try {
             const myId = AuthenticationStore?.getId?.();
             if (myId) {
-                FluxDispatcher.dispatch({ type: "USER_PROFILE_UPDATE", guildId: null });
-                FluxDispatcher.dispatch({ type: "USER_UPDATE", user: UserStore?.getUser?.(myId) });
-                FluxDispatcher.dispatch({ type: "CURRENT_USER_UPDATE" });
+                const freshUser = UserStore?.getUser?.(myId);
+                if (freshUser) FluxDispatcher.dispatch({ type: "USER_UPDATE", user: freshUser });
             }
         } catch { }
+
         if (isEnabled) { startDomObserver(); injectFontStyle(); }
         else            { stopDomObserver(); removeFontStyle(); }
     } catch { }
 }
+
+// Keep old name for backward compat
+const forceAccountPanelRerender = forceFullRerender;
 
 // ─── STARTUP REFRESH ──────────────────────────────────────────────────────────
 function scheduleStartupRefreshes() {
@@ -891,7 +959,7 @@ function scheduleStartupRefreshes() {
             syncCurrentUserData();
             injectFontStyle();
             if (!domObserver) startDomObserver();
-            requestAnimationFrame(() => { stampOwnNameElements(); forceAccountPanelRerender(); });
+            requestAnimationFrame(() => { stampOwnNameElements(); forceFullRerender(); });
         }, delay));
     }
 }
@@ -904,7 +972,7 @@ function onAccountSwitch() {
     _dataVersion++; _realUsername = ""; _realGlobalName = "";
     if (isEnabled) { startDomObserver(); injectFontStyle(); }
     else           { stopDomObserver(); removeFontStyle(); }
-    forceAccountPanelRerender();
+    forceFullRerender();
 }
 
 // ─── AVATAR PATCH ─────────────────────────────────────────────────────────────
@@ -988,48 +1056,8 @@ async function copyUserProfile(userId: string) {
         const myIdForCopy = AuthenticationStore?.getId?.();
         if (myIdForCopy) { allAccountsData[myIdForCopy] = newData; allAccountsEnabled[myIdForCopy] = true; }
         saveDataSync(newData, true); saveAllDataSync(); await persistToDataStore();
-        forceAccountPanelRerender();
+        forceFullRerender();
     } catch (err) { console.error("[CustomProfile] copyUserProfile error:", err); }
-}
-
-// ─── LIKES ────────────────────────────────────────────────────────────────────
-function useLikes(targetUserId: string) {
-    const myId = React.useMemo(() => { try { return AuthenticationStore?.getId?.() ?? ""; } catch { return ""; } }, []);
-    const [count, setCount] = React.useState<number | null>(null);
-    const [likedByMe, setLikedByMe] = React.useState(false);
-    const [loading, setLoading] = React.useState(false);
-
-    React.useEffect(() => {
-        if (!targetUserId || !myId) return;
-        fetch(`${LIKES_API}/like/${targetUserId}?from=${myId}`)
-            .then(r => r.json())
-            .then(d => { setCount(d.count ?? 0); setLikedByMe(d.likedByMe ?? false); })
-            .catch(() => setCount(0));
-    }, [targetUserId, myId]);
-
-    async function toggle() {
-        if (loading || !myId) return;
-        setLoading(true);
-        const optimisticCount = (count ?? 0) + (likedByMe ? -1 : 1);
-        const optimisticLiked = !likedByMe;
-        setCount(optimisticCount);
-        setLikedByMe(optimisticLiked);
-        try {
-            const r = await fetch(`${LIKES_API}/like/${targetUserId}`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ from: myId }),
-            });
-            const d = await r.json();
-            setCount(d.count ?? optimisticCount);
-            setLikedByMe(d.likedByMe ?? optimisticLiked);
-        } catch {
-            setCount(count);
-            setLikedByMe(likedByMe);
-        } finally { setLoading(false); }
-    }
-
-    return { count, likedByMe, toggle, loading, myId };
 }
 
 // ─── CONTEXT MENU ─────────────────────────────────────────────────────────────
@@ -1041,15 +1069,6 @@ const userContextMenuPatch: NavContextMenuPatchCallback = (children, { user }: a
         const isCopied = isEnabled && storedData.copiedUserId === user.id;
         children.push(
             <Menu.MenuGroup>
-                <Menu.MenuItem id="cp-like-btn" label={`${"\u2764\uFE0F"} Like this profile`} action={() => {
-                    const myId = AuthenticationStore?.getId?.() ?? "";
-                    if (!myId) return;
-                    fetch(`${LIKES_API}/like/${user.id}`, {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ from: myId }),
-                    }).catch(() => {});
-                }} />
                 {isCopied ? (
                     <Menu.MenuItem id="remove-copy-profile" label={t("Remove copy profile")} color="danger"
                         action={async () => {
@@ -1059,7 +1078,7 @@ const userContextMenuPatch: NavContextMenuPatchCallback = (children, { user }: a
                                 storedData = {}; isEnabled = false; cachedFakeUser = null;
                                 cachedOriginalUser = null; _trueOriginalUser = null; _dataVersion++;
                                 saveDataSync({}, false); saveAllDataSync(); await persistToDataStore();
-                                forceAccountPanelRerender();
+                                forceFullRerender();
                             } catch (e) { console.error("[CustomProfile] Error removing copy:", e); }
                         }}
                     />
@@ -1230,6 +1249,57 @@ function BadgePicker({ selected, onChange, nitroType, onNitroType, boostLevel, o
     );
 }
 
+// ─── FAKE SERVER TAG PICKER ───────────────────────────────────────────────────
+function ServerTagPicker({ tagText, tagIconId, onTagText, onTagIconId }: {
+    tagText: string; tagIconId: string;
+    onTagText: (v: string) => void; onTagIconId: (v: string) => void;
+}) {
+    const selectedIcon = SERVER_TAG_ICONS.find(i => i.id === tagIconId) ?? SERVER_TAG_ICONS[0];
+    const previewEmoji = selectedIcon.id === "none" ? "" : selectedIcon.emoji;
+    return (
+        <div className="cp-field">
+            <SectionLabel>{t("Fake Server Tag")}</SectionLabel>
+            <div style={{ fontSize:11, color:"var(--text-muted)", marginBottom:8 }}>
+                {t("Displays a fake server tag next to your name (local only).")}
+            </div>
+            <div style={{ display:"flex", gap:8, alignItems:"center", marginBottom:12 }}>
+                {previewEmoji && <span style={{ fontSize:16 }}>{previewEmoji}</span>}
+                {tagText
+                    ? <span style={{ background:"var(--background-accent)", color:"var(--header-primary)", padding:"2px 8px", borderRadius:4, fontSize:13, fontWeight:700, letterSpacing:"0.02em" }}>{tagText}</span>
+                    : <span style={{ color:"var(--text-muted)", fontSize:12 }}>{t("No server tag set")}</span>
+                }
+            </div>
+            <SectionLabel style={{ marginTop:0, marginBottom:4 }}>{t("Tag text")}</SectionLabel>
+            <div style={{ display:"flex", gap:6, alignItems:"center", marginBottom:12 }}>
+                <input
+                    className="cp-input"
+                    placeholder={t("e.g. FLIP, GANG, MOD...")}
+                    value={tagText}
+                    maxLength={20}
+                    onChange={e => onTagText(e.target.value)}
+                    style={{ flex:1 }}
+                />
+                {tagText && <button className="cp-clear-btn" onClick={() => onTagText("")}><CloseIcon /></button>}
+            </div>
+            <SectionLabel style={{ marginTop:0, marginBottom:6 }}>{t("Tag icon")}</SectionLabel>
+            <div style={{ display:"flex", gap:6, flexWrap:"wrap" }}>
+                {SERVER_TAG_ICONS.map(icon => (
+                    <button
+                        key={icon.id}
+                        onClick={() => onTagIconId(icon.id)}
+                        className={`cp-badge ${tagIconId === icon.id ? "cp-badge--on" : ""}`}
+                        title={icon.label}
+                        style={{ padding:"4px 8px", borderRadius:6, display:"flex", alignItems:"center", gap:4, fontSize:12 }}
+                    >
+                        {icon.emoji ? <span style={{ fontSize:14 }}>{icon.emoji}</span> : null}
+                        <span>{icon.label}</span>
+                    </button>
+                ))}
+            </div>
+        </div>
+    );
+}
+
 function FontPicker({ fontId, effect, color, color2, onFontId, onEffect, onColor, onColor2, displayName }: {
     fontId: number; effect: string; color: string; color2: string;
     onFontId: (v: number) => void; onEffect: (v: string) => void;
@@ -1378,6 +1448,8 @@ function CustomProfileModal({ rootProps }: { rootProps: any }) {
     const boostLevel = data.boostMonths ?? -1;
     const customIds  = data.customBadgeIds ?? [];
     const oldName    = data.oldName ?? "";
+    const tagText    = data.serverTagText ?? "";
+    const tagIconId  = data.serverTagIconId ?? "none";
 
     const previewDisplayName = React.useMemo(() => {
         if (data.globalName?.trim()) return data.globalName.trim();
@@ -1407,21 +1479,54 @@ function CustomProfileModal({ rootProps }: { rootProps: any }) {
         try {
             setSaving(true);
             const savedData: CustomProfileData = { ...dataRef.current };
+
             allAccountsData[selectedAccountId]    = savedData;
             allAccountsEnabled[selectedAccountId] = true;
+
             if (selectedAccountId === myId) {
-                storedData = savedData; isEnabled = true;
-                cachedFakeUser = null; cachedOriginalUser = null; _dataVersion++;
+                storedData = savedData;
+                isEnabled = true;
+                // Immediately invalidate all caches so next re-render picks up the new data
+                cachedFakeUser = null;
+                cachedOriginalUser = null;
+                _dataVersion++;
             }
+
+            // Persist synchronously to localStorage first so it's available immediately
             saveAllDataSync();
             if (selectedAccountId === myId) saveDataSync(storedData, true);
+
+            // Then persist to DataStore
             await persistToDataStore();
+
             if (selectedAccountId === myId) {
                 if (storedData.displayNameFont) { injectFontStyle(); requestAnimationFrame(() => stampOwnNameElements()); }
                 else removeFontStyle();
                 updateCachedRealData();
-                forceAccountPanelRerender();
+
+                // Force a full re-render sequence with staggered delays to ensure
+                // nameplate, effects, and other collectibles all show up correctly
+                forceFullRerender();
+
+                // Extra re-render passes after short delays to catch lazy-loaded components
+                setTimeout(() => {
+                    cachedFakeUser = null;
+                    cachedOriginalUser = null;
+                    forceFullRerender();
+                }, 150);
+                setTimeout(() => {
+                    cachedFakeUser = null;
+                    cachedOriginalUser = null;
+                    forceFullRerender();
+                }, 500);
+                setTimeout(() => {
+                    cachedFakeUser = null;
+                    cachedOriginalUser = null;
+                    forceFullRerender();
+                    startDomObserver();
+                }, 1000);
             }
+
             setSaveCount(c => c + 1);
         } catch (err) {
             console.error("[CustomProfile] save error:", err);
@@ -1443,7 +1548,7 @@ function CustomProfileModal({ rootProps }: { rootProps: any }) {
             saveAllDataSync();
             await persistToDataStore();
             try { await DataStore.set(DS_KEY, {}); await DataStore.set(DS_ENABLED, false); } catch { }
-            forceAccountPanelRerender();
+            forceFullRerender();
         } catch (err) {
             console.error("[CustomProfile] reset error:", err);
         } finally {
@@ -1518,6 +1623,13 @@ function CustomProfileModal({ rootProps }: { rootProps: any }) {
                 <Field label={t("Account creation date")}          value={data.createdAt ?? ""} placeholder="2010-06-29"          type="date" onChange={v => set("createdAt", v)} />
                 <Field label={t("Email address (local display)")}   value={data.email    ?? ""} placeholder="exemple@mail.com"                onChange={v => set("email", v)}     />
                 <Field label={t("Phone (local display)")}           value={data.phone    ?? ""} placeholder="+33 6 00 00 00 00"               onChange={v => set("phone", v)}     />
+                <div className="cp-divider"/>
+                <ServerTagPicker
+                    tagText={tagText}
+                    tagIconId={tagIconId}
+                    onTagText={v => set("serverTagText", v || undefined)}
+                    onTagIconId={v => set("serverTagIconId", v === "none" ? undefined : v)}
+                />
                 <div className="cp-divider"/>
                 <BadgePicker
                     selected={data.badgeFlags ?? 0} onChange={v => set("badgeFlags", v)}
@@ -1677,6 +1789,32 @@ export default definePlugin({
         return !!(isEnabled && userId && this._copiedUserId && userId === this._copiedUserId);
     },
 
+    /**
+     * Builds the fake primary-guild (server tag) object Discord expects on
+     * user.primaryGuild: { tag, identityGuildId, identityEnabled, badge }.
+     * Confirmed via live inspection: the "off" state is
+     * { identityGuildId: null, identityEnabled: false, tag: null, badge: null }.
+     * The tag pill only renders when identityEnabled is true, so that flag
+     * must be set alongside `tag` for the pill to appear next to the name.
+     * We omit a real `badge` hash (no genuine guild asset to point to) and
+     * instead prefix the chosen emoji into `tag` text itself.
+     */
+    fakePrimaryGuild(real: any) {
+        if (!isEnabled || !storedData.serverTagText) return real ?? null;
+        try {
+            const iconObj = SERVER_TAG_ICONS.find(i => i.id === (storedData.serverTagIconId ?? "none"));
+            const emoji   = (iconObj && iconObj.id !== "none") ? iconObj.emoji + " " : "";
+            return {
+                tag: emoji + storedData.serverTagText,
+                identityGuildId: real?.identityGuildId ?? "1",
+                identityEnabled: true,
+                badge: real?.badge ?? null,
+            };
+        } catch {
+            return real ?? null;
+        }
+    },
+
     fakeCurrentUser(user: any) {
         if (!user || (!isEnabled && this._forceNative !== true) || !isMe(user.id)) return user;
         if (cachedOriginalUser === user && cachedFakeUser && cachedDataHash === _dataVersion) return cachedFakeUser;
@@ -1757,6 +1895,15 @@ export default definePlugin({
         const wantedFlags = (isEnabled && storedData.badgeFlags != null) ? storedData.badgeFlags : realUser.publicFlags;
         clone.publicFlags = wantedFlags; clone.flags = wantedFlags;
 
+        // Server tag (primary guild) — Discord renders the small pill next
+        // to the username from user.primaryGuild =
+        // { tag, identityGuildId, identityEnabled, badge }.
+        if (storedData.serverTagText) {
+            clone.primaryGuild = this.fakePrimaryGuild(realUser.primaryGuild);
+        } else if (realUser.primaryGuild !== undefined) {
+            clone.primaryGuild = realUser.primaryGuild;
+        }
+
         if (isEnabled && storedData.nitro) {
             clone.premiumType = 2;
             const LEVEL_MONTHS = [1,2,3,6,12,24,36,72];
@@ -1787,6 +1934,12 @@ export default definePlugin({
     _cachedProfileInput: null as any,
     _cachedProfileVersion: 0,
 
+    invalidateProfileCache() {
+        this._cachedProfile = null;
+        this._cachedProfileInput = null;
+        this._cachedProfileVersion = -1;
+    },
+
     hookUserProfile(profile: any) {
         if (!profile || !isEnabled) return profile;
         if (this._cachedProfileInput === profile && this._cachedProfile && this._cachedProfileVersion === _dataVersion) return this._cachedProfile;
@@ -1800,6 +1953,9 @@ export default definePlugin({
             if (storedData.decorationAsset) {
                 merged.avatarDecoration = null;
                 merged.avatarDecorationData = { asset: storedData.decorationAsset, skuId: AVATAR_DECORATIONS.find(d => d.asset === storedData.decorationAsset)?.id ?? storedData.decorationAsset };
+            }
+            if (storedData.serverTagText) {
+                merged.primaryGuild = this.fakePrimaryGuild(profile.primaryGuild);
             }
             if (storedData.nameplateSkuId) {
                 const baseCollectibles = profile.collectibles ? { ...profile.collectibles } : {};
@@ -1974,7 +2130,7 @@ export default definePlugin({
                     syncCurrentUserData();
                     injectFontStyle();
                     startDomObserver();
-                    forceAccountPanelRerender();
+                    forceFullRerender();
                     scheduleStartupRefreshes();
                     requestAnimationFrame(removeHideStyle);
                 } else {
@@ -2042,17 +2198,7 @@ export default definePlugin({
             getBadges({ userId, badges: nativeBadges }: { userId: string; guildId: string; badges: ProfileBadge[] }) {
                 let badges: ProfileBadge[] = [...(nativeBadges || [])];
 
-                // Likes badge — shows on EVERY profile (incl. your own), independent of the fake-profile toggle
-                if (userId) {
-                    badges.push({
-                        description: "Profile Likes",
-                        iconSrc: `${LIKES_API}/badge/${userId}?t=${Math.floor(Date.now() / 30000)}`,
-                        position: 0,
-                        props: { style: { width: "auto", height: "20px", borderRadius: "10px" } },
-                    } as ProfileBadge);
-                }
-
-                // Everything below this line still only applies to your own faked profile
+                // Only apply fake badges to own profile
                 if (!isEnabled || userId !== UserStore.getCurrentUser()?.id) return badges;
 
                 const style = { borderRadius: "50%", width: "22px", height: "22px" };
@@ -2065,7 +2211,6 @@ export default definePlugin({
                 badges = badges.filter(b => {
                     const desc = (b.description || "").toLowerCase();
                     const icon = (b.iconSrc || "").toLowerCase();
-                    if (desc.includes("profile likes")) return true;
                     if (["nitro","subscriber","abonn","premium","inscrit"].some(k => desc.includes(k))) return false;
                     if (icon.includes("nitro") || icon.includes("premium")) return false;
                     if (["booster","boost"].some(k => desc.includes(k))) return false;
