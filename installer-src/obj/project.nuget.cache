@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "tpXxdcIqYEs=",
+  "dgSpecHash": "/z9g/xWoPuM=",
   "success": true,
-  "projectFilePath": "C:\\Users\\savon\\Downloads\\fancord-master-fixed\\fancord-master\\installer-src\\FancordInstaller.csproj",
+  "projectFilePath": "C:\\Users\\savon\\Downloads\\fancord-master\\installer-src\\FancordInstaller.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\savon\\.nuget\\packages\\microsoft.net.illink.tasks\\8.0.27\\microsoft.net.illink.tasks.8.0.27.nupkg.sha512",
     "C:\\Users\\savon\\.nuget\\packages\\microsoft.web.webview2\\1.0.2420.47\\microsoft.web.webview2.1.0.2420.47.nupkg.sha512",

@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\savon\\Downloads\\fancord-master-fixed\\fancord-master\\installer-src\\FancordInstaller.csproj": {}
+    "C:\\Users\\savon\\Downloads\\fancord-master\\installer-src\\FancordInstaller.csproj": {}
   },
   "projects": {
-    "C:\\Users\\savon\\Downloads\\fancord-master-fixed\\fancord-master\\installer-src\\FancordInstaller.csproj": {
+    "C:\\Users\\savon\\Downloads\\fancord-master\\installer-src\\FancordInstaller.csproj": {
       "version": "2.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\savon\\Downloads\\fancord-master-fixed\\fancord-master\\installer-src\\FancordInstaller.csproj",
+        "projectUniqueName": "C:\\Users\\savon\\Downloads\\fancord-master\\installer-src\\FancordInstaller.csproj",
         "projectName": "Fancord-Installer",
-        "projectPath": "C:\\Users\\savon\\Downloads\\fancord-master-fixed\\fancord-master\\installer-src\\FancordInstaller.csproj",
+        "projectPath": "C:\\Users\\savon\\Downloads\\fancord-master\\installer-src\\FancordInstaller.csproj",
         "packagesPath": "C:\\Users\\savon\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\savon\\Downloads\\fancord-master-fixed\\fancord-master\\installer-src\\obj\\",
+        "outputPath": "C:\\Users\\savon\\Downloads\\fancord-master\\installer-src\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\savon\\AppData\\Roaming\\NuGet\\NuGet.Config"
