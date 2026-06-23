@@ -18,11 +18,18 @@ const DS_KEY = "FakeFriends_state";
 // survives client restarts / reloads.
 const fakeState = new Map<string, "pending" | "accepted">();
 
-type PersistedEntry = [string, "pending" | "accepted"];
+// userPayloadCache stores the full user payload so we don't need to re-fetch from Discord on restart
+const userPayloadCache = new Map<string, any>();
+
+type PersistedEntry = [string, "pending" | "accepted", any?];
 
 async function persistState() {
     try {
-        const serialized: PersistedEntry[] = [...fakeState.entries()];
+        const serialized: PersistedEntry[] = [...fakeState.entries()].map(([id, state]) => [
+            id,
+            state,
+            userPayloadCache.get(id) ?? null,
+        ]);
         await dsSet(DS_KEY, serialized);
     } catch (e) {
         console.error("[FakeFriends] Failed to persist state:", e);
@@ -35,12 +42,16 @@ async function loadState() {
         if (!Array.isArray(saved)) return;
 
         fakeState.clear();
+        userPayloadCache.clear();
         for (const entry of saved) {
-            if (!Array.isArray(entry) || entry.length !== 2) continue;
-            const [id, state] = entry;
+            if (!Array.isArray(entry) || entry.length < 2) continue;
+            const [id, state, payload] = entry;
             if (typeof id !== "string") continue;
             if (state !== "pending" && state !== "accepted") continue;
             fakeState.set(id, state);
+            if (payload && typeof payload === "object") {
+                userPayloadCache.set(id, payload);
+            }
         }
     } catch (e) {
         console.error("[FakeFriends] Failed to load state:", e);
@@ -134,9 +145,16 @@ function patchAcceptFriend() {
             if (fakeState.get(userId) === "pending") {
                 fakeState.set(userId, "accepted");
                 await persistState();
+                const cachedPayload = userPayloadCache.get(userId);
                 FluxDispatcher.dispatch({
                     type: "RELATIONSHIP_UPDATE",
-                    relationship: { id: userId, type: RelationshipType.FRIEND, nickname: null, since: new Date().toISOString() }
+                    relationship: {
+                        id: userId,
+                        type: RelationshipType.FRIEND,
+                        nickname: null,
+                        since: new Date().toISOString(),
+                        ...(cachedPayload ? { user: cachedPayload } : {}),
+                    }
                 });
                 return;
             }
@@ -172,6 +190,7 @@ function patchRemoveRelationship() {
             RA[name] = async function (userId: string, ...args: any[]) {
                 if (fakeState.has(userId)) {
                     fakeState.delete(userId);
+                    userPayloadCache.delete(userId);
                     await persistState();
                     FluxDispatcher.dispatch({ type: "RELATIONSHIP_REMOVE", relationship: { id: userId } });
                     return;
@@ -197,10 +216,10 @@ function makeUserPayload(user: any) {
     return {
         id: user.id,
         username: user.username,
-        global_name: user.globalName ?? user.username,
+        global_name: user.globalName ?? user.global_name ?? user.username,
         avatar: user.avatar ?? null,
         discriminator: user.discriminator ?? "0",
-        public_flags: user.publicFlags ?? 0,
+        public_flags: user.publicFlags ?? user.public_flags ?? 0,
         flags: user.flags ?? 0,
         bot: false,
     };
@@ -226,12 +245,16 @@ function dispatchRelationship(user: any, type: RelationshipType) {
 }
 
 async function addDirectFriend(user: any) {
+    const payload = makeUserPayload(user);
+    userPayloadCache.set(user.id, payload);
     fakeState.set(user.id, "accepted");
     await persistState();
     dispatchRelationship(user, RelationshipType.FRIEND);
 }
 
 async function addPendingRequest(user: any) {
+    const payload = makeUserPayload(user);
+    userPayloadCache.set(user.id, payload);
     fakeState.set(user.id, "pending");
     await persistState();
     FluxDispatcher.dispatch({
@@ -241,7 +264,7 @@ async function addPendingRequest(user: any) {
             type: RelationshipType.INCOMING_REQUEST,
             nickname: null,
             since: new Date().toISOString(),
-            user: makeUserPayload(user),
+            user: payload,
         },
         incoming: true,
     });
@@ -251,22 +274,60 @@ async function addPendingRequest(user: any) {
 async function reapplyFakeStates() {
     for (const [userId, state] of fakeState) {
         try {
-            let user = UserStore.getUser(userId) as any;
-            if (!user) {
-                try { await UserUtils.getUser(userId); } catch { }
-                user = UserStore.getUser(userId) as any;
+            // First try cached payload (no network needed)
+            let payload = userPayloadCache.get(userId);
+
+            // If no cache, try UserStore then network as fallback
+            if (!payload) {
+                let user = UserStore.getUser(userId) as any;
+                if (!user) {
+                    try { await UserUtils.getUser(userId); } catch { }
+                    user = UserStore.getUser(userId) as any;
+                }
+                if (user) {
+                    payload = makeUserPayload(user);
+                    userPayloadCache.set(userId, payload);
+                    await persistState(); // backfill cache into storage
+                }
             }
-            if (!user) continue;
+
+            // If still no payload, we can still reapply the relationship type
+            // using just the id — store patches will handle getRelationshipType correctly
+            // but we need a minimal user object for the dispatch
+            if (!payload) {
+                payload = {
+                    id: userId,
+                    username: userId,
+                    global_name: userId,
+                    avatar: null,
+                    discriminator: "0",
+                    public_flags: 0,
+                    flags: 0,
+                    bot: false,
+                };
+            }
 
             if (state === "accepted") {
                 FluxDispatcher.dispatch({
                     type: "RELATIONSHIP_UPDATE",
-                    relationship: { id: userId, type: RelationshipType.FRIEND, nickname: null, since: new Date().toISOString(), user: makeUserPayload(user) }
+                    relationship: {
+                        id: userId,
+                        type: RelationshipType.FRIEND,
+                        nickname: null,
+                        since: new Date().toISOString(),
+                        user: payload,
+                    }
                 });
             } else if (state === "pending") {
                 FluxDispatcher.dispatch({
                     type: "RELATIONSHIP_ADD",
-                    relationship: { id: userId, type: RelationshipType.INCOMING_REQUEST, nickname: null, since: new Date().toISOString(), user: makeUserPayload(user) },
+                    relationship: {
+                        id: userId,
+                        type: RelationshipType.INCOMING_REQUEST,
+                        nickname: null,
+                        since: new Date().toISOString(),
+                        user: payload,
+                    },
                     incoming: true,
                 });
             }
@@ -669,6 +730,7 @@ async function removeFakeFriendsForGuild(guildId: string) {
 
     for (const id of toRemove) {
         fakeState.delete(id);
+        userPayloadCache.delete(id);
         try {
             FluxDispatcher.dispatch({ type: "RELATIONSHIP_REMOVE", relationship: { id } });
         } catch { }
@@ -875,6 +937,7 @@ const userContextPatch: NavContextMenuPatchCallback = (children, props) => {
                 <Menu.MenuItem key="ff-cancel" id="ff-cancel" label="Cancel la fake demande" color="danger"
                     action={async () => {
                         fakeState.delete(userId);
+                        userPayloadCache.delete(userId);
                         await persistState();
                         FluxDispatcher.dispatch({ type: "RELATIONSHIP_REMOVE", relationship: { id: userId } });
                     }} />
@@ -884,6 +947,7 @@ const userContextPatch: NavContextMenuPatchCallback = (children, props) => {
                 <Menu.MenuItem key="ff-remove" id="ff-remove" label="Retirer des fake friends" color="danger"
                     action={async () => {
                         fakeState.delete(userId);
+                        userPayloadCache.delete(userId);
                         await persistState();
                         FluxDispatcher.dispatch({ type: "RELATIONSHIP_REMOVE", relationship: { id: userId } });
                     }} />

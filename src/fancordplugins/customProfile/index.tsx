@@ -17,7 +17,6 @@ import virtualMerge from "virtual-merge";
 
 import { t } from "../autoTranslateFancord";
 
-// ─── CONSTANTS ────────────────────────────────────────────────────────────────
 const DS_KEY = "customProfile_data";
 const DS_ENABLED = "customProfile_enabled";
 const DS_ALL_DATA = "customProfile_allData";
@@ -30,11 +29,9 @@ const FONT_STYLE_ID = "cp-display-name-font";
 const HIDE_STYLE_ID = "cp-hide-during-load";
 const NOTIFICATION_ID = "cp-load-notification";
 
-// ─── STARTUP DELAYS ───────────────────────────────────────────────────────────
 const STARTUP_DELAYS = [300, 750, 1500, 3000, 6000, 12000];
 let _startupRefreshTimers: ReturnType<typeof setTimeout>[] = [];
 
-// ─── FLAGS ────────────────────────────────────────────────────────────────────
 const FLAG = {
     STAFF: 1,
     PARTNER: 2,
@@ -152,7 +149,6 @@ function getFontFamilyById(fontId: number): string { return DISPLAY_NAME_FONTS.f
 function getFontWeightById(fontId: number): number  { return DISPLAY_NAME_FONTS.find(f => f.fontId === fontId)?.weight ?? 700; }
 function getFontItalicById(fontId: number): boolean { return DISPLAY_NAME_FONTS.find(f => f.fontId === fontId)?.italic ?? false; }
 
-// ─── SERVER TAG ICONS ─────────────────────────────────────────────────────────
 const SERVER_TAG_ICONS = [
     { id: "none",      label: "None",         emoji: "" },
     { id: "gaming",    label: "Gaming",        emoji: "🎮" },
@@ -197,23 +193,22 @@ const SERVER_TAG_ICONS = [
     { id: "dog",       label: "Dog",           emoji: "🐶" },
 ];
 
-// ─── AVATAR DECORATIONS ───────────────────────────────────────────────────────
 const AVATAR_DECORATIONS = [
     { id: "1309668861704146984", label: "Study Session",            asset: "a_28fbe43ba1ee217576dee69712bbb628" },
     { id: "1341506443567693824", label: "Cat Onesie (Black)",       asset: "a_9661cf3296ac236d8815e3f5b809a467" },
-    { id: "1366494385482502184", label: "Bonsai Bundle",            asset: "a_3513b3b45624e47a4855f6951eea484d" },
+    { id: "1366494385537028208", label: "Bonsai Bundle",            asset: "a_3513b3b45624e47a4855f6951eea484d" },
     { id: "1314020996570812506", label: "Snow Globe (Wood)",        asset: "a_14088d7f62a47bf87196b56848751709" },
     { id: "1357589632388304956", label: "Press F (Black)",          asset: "a_fbbdd5565db1c91d95804f7df0074c5a" },
-    { id: "1459194821003575307", label: "Hunny Bunnies Bundle",     asset: "a_1f2df17cd18e322d446dea49549dedf4" },
-    { id: "1436367668788592782", label: "Hallucination Bundle",     asset: "a_57807030ab60f7ac0c4a1998aa091bbf" },
-    { id: "1459194821045387307", label: "Sweetheart Bundle",        asset: "a_d5f07a18604fae78eff00fc17d1340e8" },
+    { id: "1459194821221810319", label: "Hunny Bunnies Bundle",     asset: "a_1f2df17cd18e322d446dea49549dedf4" },
+    { id: "1436367668897775757", label: "Hallucination Bundle",     asset: "a_57807030ab60f7ac0c4a1998aa091bbf" },
+    { id: "1459194821095854121", label: "Sweetheart Bundle",        asset: "a_d5f07a18604fae78eff00fc17d1340e8" },
     { id: "1432550258247995533", label: "Twilight (Dusk)",          asset: "a_26f13552ff23d9d5b3204d1934245764" },
     { id: "1256321669467865088", label: "Spirit Embers",            asset: "a_1005898c6acf56a9ac5010baf444f6fd" },
-    { id: "1333866045164753087", label: "Red Heartstrings Bundle",  asset: "a_63a69109db554a66764cbe61c6e556ef" },
+    { id: "1333866045370531921", label: "Red Heartstrings Bundle",  asset: "a_63a69109db554a66764cbe61c6e556ef" },
     { id: "1341506443794186240", label: "Heartbloom (Green)",       asset: "a_76f0dc77cdedbd10b414524f532b5a39" },
     { id: "1437881614116978809", label: "Light Cycles",             asset: "a_546e82386035d3f85adb61006f84bfb9" },
     { id: "1256321669467865094", label: "Arcane Sigil",             asset: "a_ef8d97374ffdbf140df1164be6c69e46" },
-    { id: "1329609528504746075", label: "Lucky Envelopes Bundle",   asset: "a_1b1df0ae8c2d34afd85da5c22a0d761a" },
+    { id: "1202445890909110323", label: "Lucky Envelopes Bundle",   asset: "a_1b1df0ae8c2d34afd85da5c22a0d761a" },
     { id: "1369434230605615225", label: "Dewdrop",                  asset: "a_d5bbba33a9471255027f590d671ea0ef" },
     { id: "1329609528492429332", label: "Lunar Celebration Bundle", asset: "a_0f4f1b40921ce680b60007e94427d1f2" },
     { id: "1366494385537028208", label: "Bonsai",                   asset: "a_3513b3b45624e47a4855f6951eea484d" },
@@ -239,13 +234,18 @@ const AVATAR_DECORATIONS = [
     { id: "1354894010623197534", label: "Doughnut Cow",             asset: "a_45635c94cd1dfa196f9711c01cbd7df8" },
     { id: "1341506443735465984", label: "In Love (Green)",          asset: "a_7910f3775d7e2d8ee9f5eb6b5305ae1e" },
     { id: "1432550258302386216", label: "Constellations (Beryl)",   asset: "a_7fe8d14e27ca87799a1ab57459bd34e2" },
+    { id: "1212569433839636530", label: "Kitty Ears",               asset: "a_c3cffc19e9784f7d0b005eecdf1b566e" },
+    { id: "1352407446282440704", label: "Nom Kitty",                asset: "a_nom_kitty_placeholder" },
+    { id: "1144305233707671573", label: "Soul Leaving Body",        asset: "a_c3c09bd122898be35093d0d59850f627" },
+    { id: "1271174324375519273", label: "Straw Hat",                asset: "a_3d1e6078b2e4c8865e0ad0f429d651b1" },
+    { id: "1369434230853075014", label: "Hamster Wheel",            asset: "a_hamster_placeholder" },
+    { id: "1400163655223607467", label: "Mini Goku",                asset: "a_mini_goku_placeholder" },
 ];
 
 function getDecorationUrl(asset: string): string {
     return `https://cdn.discordapp.com/avatar-decoration-presets/${asset}.png`;
 }
 
-// ─── NAMEPLATES ───────────────────────────────────────────────────────────────
 const NAMEPLATES = [
     { skuId: "1511102779819687956", label: "United States",         thumbnail: "nameplates/united_states/1511102779819687956/static.png",           emoji: "🇺🇸"  },
     { skuId: "1511107752762544188", label: "England",               thumbnail: "nameplates/england/1511107752762544188/static.png",                 emoji: "🏴" },
@@ -270,6 +270,11 @@ const NAMEPLATES = [
     { skuId: "1447654091026206894", label: "Leo",                   thumbnail: "nameplates/zodiac/leo/static.png",                                emoji: "♌"  },
     { skuId: "1459194821372805192", label: "Love Meter",            thumbnail: "nameplates/love_meter/1459194821372805192/static.png",            emoji: "💕"  },
     { skuId: "1459194821456691393", label: "Lone Wolf",             thumbnail: "nameplates/lone_wolf/1459194821456691393/static.png",             emoji: "🐺"  },
+    { skuId: "1513665222584434849", label: "Room Clouds",           thumbnail: "nameplates/room_clouds/1513665222584434849/static.png",           emoji: "☁️" },
+    { skuId: "1462116614131548265", label: "Crows",                 thumbnail: "nameplates/crows/1462116614131548265/static.png",                 emoji: "🐦‍⬛" },
+    { skuId: "1459194821519605784", label: "Poo",                   thumbnail: "nameplates/poo/1459194821519605784/static.png",                   emoji: "💩" },
+    { skuId: "1385035256058482798", label: "Dragon",                thumbnail: "nameplates/dragon/1385035256058482798/static.png",                emoji: "🐉" },
+    { skuId: "1513665092548563095", label: "The Claw",              thumbnail: "nameplates/the_claw/1513665092548563095/static.png",              emoji: "🦞" },
 ];
 
 function getNameplateUrls(np: typeof NAMEPLATES[0]) {
@@ -288,7 +293,6 @@ function buildNameplateData(skuId: string, np: typeof NAMEPLATES[0] | undefined)
     return { id: skuId, skuId, asset: np?.asset ?? skuId, src: npUrls[0] ?? null, label: np?.label ?? "Custom", type: 2 };
 }
 
-// ─── PROFILE EFFECTS ──────────────────────────────────────────────────────────
 const PROFILE_EFFECTS = [
     { id: "1324454240747262063", effectDefinitionId: "1324454240747262063", label: "Pink Mooncaps Bundle",         thumb: "https://cdn.discordapp.com/assets/content/24147860a189819a10bf675de42885a159ec3b44559ff2c1170c1d6deafa3afa" },
     { id: "1466977017915379893", effectDefinitionId: "1466977017915379893", label: "Electric Aura (Quartz)",       thumb: "https://cdn.discordapp.com/media/v1/collectibles-shop/f272d1d5b3990f910f46c7b997db0bc40d894122020f5459977e872b3242ab06" },
@@ -312,7 +316,7 @@ const PROFILE_EFFECTS = [
     { id: "1402472280688168990", effectDefinitionId: "1402472280688168990", label: "Rawr xD Splash",               thumb: "https://cdn.discordapp.com/assets/content/347e968b99452040caf9766a6ae270297eb2393b075251efdc5d4882fd411b55" },
     { id: "1379220459182096414", effectDefinitionId: "1379220459182096414", label: "Primal Hunger",                thumb: "https://cdn.discordapp.com/assets/content/3dc7916995014ec3b00f0e7411e49ca92bfb3c4c4e0244cef936bf27693ef285" },
     { id: "1466978489608441995", effectDefinitionId: "1466978489608441995", label: "Neon Glow (Ruby)",             thumb: "https://cdn.discordapp.com/media/v1/collectibles-shop/1975c592820de948e903c52d20c240daea36cc1a4518c6960b1379c3cf210e46" },
-    { id: "1436367668788592782", effectDefinitionId: "1436367668788592782", label: "Hallucination Bundle",         thumb: "https://cdn.discordapp.com/assets/content/cea065bfb961187515e30ab2b5f2aaef7dae845107c47347a8cdb1cd1ed7c49d" },
+    { id: "1436367668897775757", effectDefinitionId: "1436367668788592782", label: "Hallucination Bundle",         thumb: "https://cdn.discordapp.com/assets/content/cea065bfb961187515e30ab2b5f2aaef7dae845107c47347a8cdb1cd1ed7c49d" },
     { id: "1385050947939602482", effectDefinitionId: "1385050947939602482", label: "Firefly Meadow",               thumb: "https://cdn.discordapp.com/assets/content/3e31649457d657ba4b1c75971ea2b7aae6d1c35048cfaaac6400b92be27f0578" },
     { id: "1432550258432544818", effectDefinitionId: "1432550258432544818", label: "Cosmic Twilight (Beryl)",      thumb: "https://cdn.discordapp.com/assets/content/4d880d9c4dca047f5e7494f5489f7472bba08ac1f9fe21dd0d30a4bf9cb68c58" },
     { id: "1271564593746939904", effectDefinitionId: "1271564593746939904", label: "Straw and Steel Bundle",       thumb: "https://cdn.discordapp.com/assets/content/f74068fee9a7e955b668e77f58c5166fe79822319b372156831a757bbe03852f" },
@@ -330,9 +334,14 @@ const PROFILE_EFFECTS = [
     { id: "1402472280705204246", effectDefinitionId: "1402472280705204246", label: "Kawaii Clouds (Blue)",         thumb: "https://cdn.discordapp.com/assets/content/eddf222293ff2b7649e1239108b92d54c54d40e20019b46f6dc92d27b737d7ec" },
     { id: "1341506444071010304", effectDefinitionId: "1341506444071010304", label: "Magical Girl Bundle",          thumb: "https://cdn.discordapp.com/assets/content/540883afcbff841cd1f0fbddc8aa70ff4c3e4dea7229cc8189278736e7a5f1f0" },
     { id: "1400163655047188612", effectDefinitionId: "1400163655047188612", label: "Mini Goku Bundle",             thumb: "https://cdn.discordapp.com/assets/content/5cbe7777f2629c89ec9b11b604aeaab76f499afb89b7ab153232c019413350cd" },
+    { id: "1462116613775167569", effectDefinitionId: "1462116613775167569", label: "White Crows",                  thumb: "https://cdn.discordapp.com/assets/content/905ec11ac123b3a40b73fcd551ea53497c912bf91aa5f6045aecbcaacfde47ff" },
+    { id: "1365410896196669480", effectDefinitionId: "1365410896196669480", label: "Darth Vader",                  thumb: "https://cdn.discordapp.com/assets/content/darth_vader_placeholder" },
+    { id: "1379220459135963257", effectDefinitionId: "1379220459135963257", label: "Zombies",                      thumb: "https://cdn.discordapp.com/assets/content/3dc7916995014ec3b00f0e7411e49ca92bfb3c4c4e0244cef936bf27693ef285" },
+    { id: "1387888352853885098", effectDefinitionId: "1387888352853885098", label: "Skibidi Toilet",               thumb: "https://cdn.discordapp.com/assets/content/skibidi_placeholder" },
+    { id: "1341506444293308416", effectDefinitionId: "1341506444293308416", label: "Magical Girl",                 thumb: "https://cdn.discordapp.com/assets/content/540883afcbff841cd1f0fbddc8aa70ff4c3e4dea7229cc8189278736e7a5f1f0" },
+    { id: "1245088205330710539", effectDefinitionId: "1245088205330710539", label: "Turbo Drift",                  thumb: "https://cdn.discordapp.com/assets/content/turbo_drift_placeholder" },
 ];
 
-// ─── STATE ────────────────────────────────────────────────────────────────────
 interface CustomProfileData {
     username?: string; globalName?: string; avatar?: string; banner?: string;
     bio?: string; accentColor?: number; accentColor2?: number; pronouns?: string;
@@ -341,7 +350,6 @@ interface CustomProfileData {
     oldName?: string; decorationAsset?: string; nameplateSkuId?: string;
     profileEffectId?: string; copiedUserId?: string; displayNameFont?: number;
     displayNameEffect?: string; displayNameColor?: string; displayNameColor2?: string;
-    // Fake server tag
     serverTagText?: string; serverTagIconId?: string;
 }
 
@@ -362,108 +370,57 @@ let _avatarPatchApplied = false;
 let _domQueued = false;
 let _domMutations: MutationRecord[] = [];
 
-// ─── LOAD NOTIFICATION ────────────────────────────────────────────────────────
 function showLoadNotification(success: boolean) {
     try {
         const existing = document.getElementById(NOTIFICATION_ID);
         if (existing) existing.remove();
-
         const el = document.createElement("div");
         el.id = NOTIFICATION_ID;
-
         const bg   = success ? "rgba(59,165,93,0.96)"  : "rgba(210,55,55,0.96)";
         const icon = success ? "✓" : "✗";
         const msg  = success ? "CustomProfile loaded correctly" : "CustomProfile failed to load";
-
         el.style.cssText = [
-            "position:fixed",
-            "top:16px",
-            "left:50%",
-            "transform:translateX(-50%)",
-            "z-index:99999",
-            `background:${bg}`,
-            "color:#fff",
-            "padding:10px 20px",
-            "border-radius:8px",
-            "font-size:14px",
-            "font-weight:700",
-            "font-family:'gg sans','Noto Sans',sans-serif",
-            "box-shadow:0 4px 20px rgba(0,0,0,0.4)",
-            "display:flex",
-            "align-items:center",
-            "gap:8px",
-            "pointer-events:none",
-            "transition:opacity 0.4s",
-            "opacity:1",
+            "position:fixed","top:16px","left:50%","transform:translateX(-50%)","z-index:99999",
+            `background:${bg}`,"color:#fff","padding:10px 20px","border-radius:8px","font-size:14px",
+            "font-weight:700","font-family:'gg sans','Noto Sans',sans-serif","box-shadow:0 4px 20px rgba(0,0,0,0.4)",
+            "display:flex","align-items:center","gap:8px","pointer-events:none","transition:opacity 0.4s","opacity:1",
         ].join(";");
-
         el.innerHTML = `<span style="font-size:16px">${icon}</span><span>${msg}</span>`;
         const inject = () => {
             if (document.body) {
                 document.body.appendChild(el);
-                setTimeout(() => {
-                    el.style.opacity = "0";
-                    setTimeout(() => el.remove(), 450);
-                }, 3500);
-            } else {
-                setTimeout(inject, 100);
-            }
+                setTimeout(() => { el.style.opacity = "0"; setTimeout(() => el.remove(), 450); }, 3500);
+            } else { setTimeout(inject, 100); }
         };
         inject();
-    } catch { /* never crash Discord */ }
+    } catch { }
 }
 
-// ─── PERSIST ──────────────────────────────────────────────────────────────────
 function saveDataSync(data: CustomProfileData, enabled: boolean) {
-    try {
-        localStorage.setItem(LS_KEY_DATA, JSON.stringify(data));
-        localStorage.setItem(LS_KEY_ENABLED, enabled ? "1" : "0");
-    } catch { }
+    try { localStorage.setItem(LS_KEY_DATA, JSON.stringify(data)); localStorage.setItem(LS_KEY_ENABLED, enabled ? "1" : "0"); } catch { }
 }
-
 function saveAllDataSync() {
-    try {
-        localStorage.setItem(LS_ALL_DATA, JSON.stringify(allAccountsData));
-        localStorage.setItem(LS_ALL_ENABLED, JSON.stringify(allAccountsEnabled));
-    } catch { }
+    try { localStorage.setItem(LS_ALL_DATA, JSON.stringify(allAccountsData)); localStorage.setItem(LS_ALL_ENABLED, JSON.stringify(allAccountsEnabled)); } catch { }
 }
-
 async function persistToDataStore(): Promise<void> {
-    try {
-        await Promise.all([
-            DataStore.set(DS_ALL_DATA, allAccountsData),
-            DataStore.set(DS_ALL_ENABLED, allAccountsEnabled),
-        ]);
-    } catch (err) {
-        console.error("[CustomProfile] DataStore persist error:", err);
-    }
+    try { await Promise.all([DataStore.set(DS_ALL_DATA, allAccountsData), DataStore.set(DS_ALL_ENABLED, allAccountsEnabled)]); }
+    catch (err) { console.error("[CustomProfile] DataStore persist error:", err); }
 }
 
-// ─── SYNC ─────────────────────────────────────────────────────────────────────
 function syncCurrentUserData() {
     const myId = _cachedMyId || AuthenticationStore?.getId?.();
-    if (myId) {
-        _cachedMyId = myId;
-        storedData  = allAccountsData[myId] || {};
-        isEnabled   = allAccountsEnabled[myId] || false;
-    }
+    if (myId) { _cachedMyId = myId; storedData = allAccountsData[myId] || {}; isEnabled = allAccountsEnabled[myId] || false; }
 }
-
 function updateCachedRealData() {
     try { const myId = AuthenticationStore?.getId?.(); if (myId) _cachedMyId = myId; } catch { }
 }
-
 function isMe(userId: string | null | undefined): boolean {
     if (!userId) return false;
     if (_cachedMyId) return _cachedMyId === userId;
-    try {
-        const myId = AuthenticationStore?.getId?.();
-        if (myId) { _cachedMyId = myId; return myId === userId; }
-    } catch { }
+    try { const myId = AuthenticationStore?.getId?.(); if (myId) { _cachedMyId = myId; return myId === userId; } } catch { }
     return false;
 }
 
-// ─── LOAD DATA ────────────────────────────────────────────────────────────────
 function countDataFields(d: CustomProfileData | undefined | null): number {
     if (!d) return 0;
     let count = 0;
@@ -474,7 +431,6 @@ function countDataFields(d: CustomProfileData | undefined | null): number {
     }
     return count;
 }
-
 function mergeProfileFields(a: CustomProfileData, b: CustomProfileData, preferred: "a" | "b"): CustomProfileData {
     const result: CustomProfileData = { ...a, ...b };
     const allKeys = new Set([...Object.keys(a), ...Object.keys(b)]);
@@ -537,13 +493,9 @@ async function loadData() {
                 merged[id] = mergeProfileFields(lsProfile, dsProfile, preferred);
             }
             allAccountsData = merged;
-
             allAccountsEnabled = {};
             const allEnabledIds = new Set([...Object.keys(lsAllEnabled), ...Object.keys(dsAllEnabled ?? {})]);
-            for (const id of allEnabledIds) {
-                allAccountsEnabled[id] = !!(lsAllEnabled[id] || (dsAllEnabled ?? {})[id]);
-            }
-
+            for (const id of allEnabledIds) { allAccountsEnabled[id] = !!(lsAllEnabled[id] || (dsAllEnabled ?? {})[id]); }
             syncCurrentUserData();
             saveAllDataSync();
             saveDataSync(storedData, isEnabled);
@@ -554,30 +506,22 @@ async function loadData() {
         const d = await DataStore.get(DS_KEY) as CustomProfileData | null;
         const e = await DataStore.get(DS_ENABLED) as boolean | null;
         const myId = AuthenticationStore?.getId?.();
-
         if (myId) {
             const lsProfile = lsAllData[myId] ?? {};
             const dsProfile = (d !== null ? d : {}) as CustomProfileData;
             const preferred = countDataFields(lsProfile) >= countDataFields(dsProfile) ? "a" : "b";
             const mergedProfile = mergeProfileFields(lsProfile, dsProfile, preferred);
-
             allAccountsData[myId]    = mergedProfile;
             allAccountsEnabled[myId] = e === true ? true : (lsAllEnabled[myId] ?? isEnabled);
-
             storedData = mergedProfile;
             isEnabled  = allAccountsEnabled[myId];
-
             await persistToDataStore();
             saveAllDataSync();
         }
         saveDataSync(storedData, isEnabled);
-    } catch (err) {
-        console.error("[CustomProfile] loadData error:", err);
-        throw err;
-    }
+    } catch (err) { console.error("[CustomProfile] loadData error:", err); throw err; }
 }
 
-// ─── HIDE STYLE ───────────────────────────────────────────────────────────────
 function injectHideStyle() {
     if (!isEnabled || document.getElementById(HIDE_STYLE_ID)) return;
     const style = document.createElement("style");
@@ -597,19 +541,16 @@ function removeHideStyle() { document.getElementById(HIDE_STYLE_ID)?.remove(); }
 loadDataSync();
 if (isEnabled) injectHideStyle();
 
-// ─── FONT DOM INJECTION ───────────────────────────────────────────────────────
 function isUsernameOrDiscriminator(el: HTMLElement): boolean {
     const cls = el.className || "";
     return /discriminator|subtitle|panelSubtitle|usernameTag|nameTag.*username/i.test(cls);
 }
-
 function isDisplayNameOnly(el: HTMLElement): boolean {
     if (el.querySelector('[class*="discriminator"], [class*="subtitle"], [class*="panelSubtitle"]')) return false;
     const text = el.textContent?.trim() ?? "";
     if (/#\d{4}/.test(text) || text.startsWith("@")) return false;
     return true;
 }
-
 function buildEffectCss(effect: string, color: string, color2: string): string {
     const baseColor   = color  || "#00c8ff";
     const secondColor = color2 || color || "#ff40ff";
@@ -648,7 +589,6 @@ function applyInlineFontStyles(clear: boolean) {
     const effect      = storedData.displayNameEffect ?? "solid";
     const baseColor   = color  || "#00c8ff";
     const secondColor = color2 || color || "#ff40ff";
-
     elements.forEach(el => {
         const h = el as HTMLElement;
         if (isUsernameOrDiscriminator(h) || !isDisplayNameOnly(h)) { h.removeAttribute("data-cp-me"); return; }
@@ -695,7 +635,6 @@ function applyInlineFontStyles(clear: boolean) {
 function injectFontStyle() {
     const existing = document.getElementById(FONT_STYLE_ID);
     if (!isEnabled || !storedData.displayNameFont) { existing?.remove(); applyInlineFontStyles(true); return; }
-
     const fontFamily = getFontFamilyById(storedData.displayNameFont);
     const fontWeight = getFontWeightById(storedData.displayNameFont);
     const fontItalic = getFontItalicById(storedData.displayNameFont);
@@ -704,38 +643,24 @@ function injectFontStyle() {
     const effect     = storedData.displayNameEffect ?? "solid";
     const effectCss  = buildEffectCss(effect, color, color2);
     const sharedProps = `font-family:${fontFamily}!important;font-weight:${fontWeight}!important;font-style:${fontItalic?"italic":"normal"}!important;${effectCss}`;
-
     const css = `
         [data-cp-me]{${sharedProps}}
-        [class*="nameTag"] [class*="globalName"],
-        [class*="nameTag"] [class*="displayName"],
+        [class*="nameTag"] [class*="globalName"],[class*="nameTag"] [class*="displayName"],
         [class*="nameTag"] h2[class*="username"]:not([class*="discriminator"]):not([class*="subtitle"]):not([class*="panelSubtitle"]),
-        [class*="accountProfileCard"] [class*="globalName"],
-        [class*="accountProfileCard"] [class*="displayName"],
-        [class*="accountProfile"] [class*="globalName"],
-        [class*="accountProfile"] [class*="displayName"],
-        [class*="userPopout"] [class*="globalName"],
-        [class*="userPopout"] [class*="displayName"],
-        [class*="userProfile"] [class*="globalName"],
-        [class*="userProfile"] [class*="displayName"],
-        [class*="profileBio"] [class*="globalName"],
-        [class*="profileHeader"] [class*="globalName"],
-        [class*="profileHeader"] [class*="displayName"],
-        [class*="userProfileModal"] [class*="globalName"],
-        [class*="userProfileModal"] [class*="displayName"],
-        [class*="profileCard"] [class*="globalName"],
-        [class*="profileCard"] [class*="displayName"],
-        [data-cp-me][class*="globalName"],
-        [data-cp-me][class*="displayName"],
-        [data-cp-me][class*="headerText"],
-        [data-cp-me][class*="roleColor"]{${sharedProps}}
+        [class*="accountProfileCard"] [class*="globalName"],[class*="accountProfileCard"] [class*="displayName"],
+        [class*="accountProfile"] [class*="globalName"],[class*="accountProfile"] [class*="displayName"],
+        [class*="userPopout"] [class*="globalName"],[class*="userPopout"] [class*="displayName"],
+        [class*="userProfile"] [class*="globalName"],[class*="userProfile"] [class*="displayName"],
+        [class*="profileBio"] [class*="globalName"],[class*="profileHeader"] [class*="globalName"],
+        [class*="profileHeader"] [class*="displayName"],[class*="userProfileModal"] [class*="globalName"],
+        [class*="userProfileModal"] [class*="displayName"],[class*="profileCard"] [class*="globalName"],
+        [class*="profileCard"] [class*="displayName"],[data-cp-me][class*="globalName"],
+        [data-cp-me][class*="displayName"],[data-cp-me][class*="headerText"],[data-cp-me][class*="roleColor"]{${sharedProps}}
     `;
-
     if (existing) { existing.textContent = css; }
     else {
         const style = document.createElement("style");
-        style.id = FONT_STYLE_ID;
-        style.textContent = css;
+        style.id = FONT_STYLE_ID; style.textContent = css;
         const inject = () => { if (document.head) document.head.appendChild(style); else setTimeout(inject, 50); };
         inject();
     }
@@ -759,7 +684,6 @@ function stampOwnNameElements() {
         if (myDisplayNames.size === 0 && u?.username) myDisplayNames.add(u.username);
     } catch { }
     if (myDisplayNames.size === 0) return;
-
     const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
     let node: Node | null;
     while ((node = walker.nextNode())) {
@@ -782,7 +706,6 @@ function stampOwnNameElements() {
     applyInlineFontStyles(false);
 }
 
-// ─── DOM OBSERVER ─────────────────────────────────────────────────────────────
 function getRealDateVariants(): string[] {
     try {
         const u = UserStore.getCurrentUser();
@@ -813,7 +736,6 @@ function getRealDateVariants(): string[] {
         return [...variants].filter(v => v.length >= 4);
     } catch { return []; }
 }
-
 function getFakeDateVariants(isoDate: string): string[] {
     try {
         const d = new Date(isoDate + "T12:00:00Z");
@@ -836,10 +758,7 @@ function scanTextNode(node: Text) {
     const val = (node as any).__cp_orig || node.nodeValue;
     let result = val; let replaced = false;
     try {
-        if (_trueOriginalUser) {
-            _realUsername   = _trueOriginalUser.username   || _realUsername;
-            _realGlobalName = _trueOriginalUser.globalName || _realGlobalName;
-        }
+        if (_trueOriginalUser) { _realUsername = _trueOriginalUser.username || _realUsername; _realGlobalName = _trueOriginalUser.globalName || _realGlobalName; }
     } catch { }
     if (storedData.createdAt) {
         const realDates = getRealDateVariants();
@@ -859,14 +778,12 @@ function scanTextNode(node: Text) {
         node.nodeValue = result;
     }
 }
-
 function scanNode(node: Node) {
     if (node.nodeType === Node.TEXT_NODE) { scanTextNode(node as Text); return; }
     const walker = document.createTreeWalker(node, NodeFilter.SHOW_TEXT);
     let n: Node | null;
     while ((n = walker.nextNode())) scanTextNode(n as Text);
 }
-
 function processDomBatch() {
     _domQueued = false;
     if (!isEnabled) { _domMutations = []; return; }
@@ -877,7 +794,6 @@ function processDomBatch() {
     }
     if (storedData.displayNameFont) stampOwnNameElements();
 }
-
 function startDomObserver() {
     stopDomObserver();
     if (!isEnabled) return;
@@ -890,12 +806,8 @@ function startDomObserver() {
     });
     domObserver.observe(document.body, { childList: true, subtree: true, characterData: true });
 }
-
 function stopDomObserver() {
-    domObserver?.disconnect();
-    domObserver = null;
-    _domMutations = [];
-    _domQueued = false;
+    domObserver?.disconnect(); domObserver = null; _domMutations = []; _domQueued = false;
     const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
     let n: Node | null;
     while ((n = walker.nextNode())) {
@@ -904,70 +816,40 @@ function stopDomObserver() {
     document.querySelectorAll("[data-cp-me]").forEach(el => el.removeAttribute("data-cp-me"));
 }
 
-// ─── FORCE RERENDER ───────────────────────────────────────────────────────────
 function forceFullRerender() {
     try {
         const WP = (Vencord as any).Webpack;
-
-        // Invalidate all caches so the next read recomputes from storedData
-        cachedFakeUser = null;
-        cachedOriginalUser = null;
-        _dataVersion++;
-
-        // Invalidate the plugin's own profile-merge cache (hookUserProfile)
+        cachedFakeUser = null; cachedOriginalUser = null; _dataVersion++;
         try { (Vencord as any).Plugins?.plugins?.CustomProfile?.invalidateProfileCache?.(); } catch { }
-
-        // Let every store that reads user/profile data know something changed.
-        // emitChange() just re-triggers connected React components to re-read
-        // from the store via their selectors — it does NOT clear any caches
-        // by itself, which is why the cache invalidation above must happen first.
         try { WP?.findByStoreName?.("UserStore")?.emitChange?.(); } catch { }
         try { WP?.findByStoreName?.("UserProfileStore")?.emitChange?.(); } catch { }
         try { WP?.findByProps?.("getUsers","getValidUsers","getHasLoggedInAccounts")?.emitChange?.(); } catch { }
-
-        // Nudge UserProfileStore / AccountPanel / popouts that listen for
-        // USER_UPDATE by re-dispatching it with the (already patched)
-        // current user. We deliberately do NOT touch user settings protos
-        // or dispatch fake USER_PROFILE_UPDATE/CURRENT_USER_UPDATE actions —
-        // those mutate real client state and were causing unrelated UI
-        // (e.g. the sidebar) to flash on every save.
         try {
             const myId = AuthenticationStore?.getId?.();
-            if (myId) {
-                const freshUser = UserStore?.getUser?.(myId);
-                if (freshUser) FluxDispatcher.dispatch({ type: "USER_UPDATE", user: freshUser });
-            }
+            if (myId) { const freshUser = UserStore?.getUser?.(myId); if (freshUser) FluxDispatcher.dispatch({ type: "USER_UPDATE", user: freshUser }); }
         } catch { }
-
         if (isEnabled) { startDomObserver(); injectFontStyle(); }
         else            { stopDomObserver(); removeFontStyle(); }
     } catch { }
 }
-
-// Keep old name for backward compat
 const forceAccountPanelRerender = forceFullRerender;
 
-// ─── STARTUP REFRESH ──────────────────────────────────────────────────────────
 function scheduleStartupRefreshes() {
-    for (const t of _startupRefreshTimers) clearTimeout(t);
+    for (const timer of _startupRefreshTimers) clearTimeout(timer);
     _startupRefreshTimers = [];
     if (!isEnabled) return;
     for (const delay of STARTUP_DELAYS) {
         _startupRefreshTimers.push(setTimeout(() => {
             if (!isEnabled) return;
-            updateCachedRealData();
-            syncCurrentUserData();
-            injectFontStyle();
+            updateCachedRealData(); syncCurrentUserData(); injectFontStyle();
             if (!domObserver) startDomObserver();
             requestAnimationFrame(() => { stampOwnNameElements(); forceFullRerender(); });
         }, delay));
     }
 }
 
-// ─── ACCOUNT SWITCH ───────────────────────────────────────────────────────────
 function onAccountSwitch() {
-    updateCachedRealData();
-    syncCurrentUserData();
+    updateCachedRealData(); syncCurrentUserData();
     cachedFakeUser = null; cachedOriginalUser = null; _trueOriginalUser = null;
     _dataVersion++; _realUsername = ""; _realGlobalName = "";
     if (isEnabled) { startDomObserver(); injectFontStyle(); }
@@ -975,7 +857,6 @@ function onAccountSwitch() {
     forceFullRerender();
 }
 
-// ─── AVATAR PATCH ─────────────────────────────────────────────────────────────
 function applyAvatarPatchEarly() {
     if (_avatarPatchApplied || !isEnabled || !storedData.avatar) return;
     try {
@@ -983,17 +864,13 @@ function applyAvatarPatchEarly() {
         if (!IU?.getUserAvatarURL) return;
         const orig = IU.getUserAvatarURL;
         IU.getUserAvatarURL = function (user: any, ...args: any[]) {
-            if (isEnabled && storedData.avatar) {
-                const uid = user?.id ?? user?.userId;
-                if (uid && isMe(uid)) return storedData.avatar;
-            }
+            if (isEnabled && storedData.avatar) { const uid = user?.id ?? user?.userId; if (uid && isMe(uid)) return storedData.avatar; }
             return orig(user, ...args);
         };
         _avatarPatchApplied = true;
     } catch { }
 }
 
-// ─── COPY USER PROFILE ────────────────────────────────────────────────────────
 async function copyUserProfile(userId: string) {
     try {
         const user = UserStore.getUser(userId) as any;
@@ -1002,7 +879,6 @@ async function copyUserProfile(userId: string) {
         const UserProfileStore = findByProps("getUserProfile", "getGuildMemberProfile") as any;
         const IU = IconUtils as any;
         const profile = UserProfileStore?.getUserProfile?.(userId) ?? {};
-
         const newData: CustomProfileData = {
             username: user.username || "", globalName: user.globalName || "",
             pronouns: "", bio: "", accentColor: undefined, accentColor2: undefined,
@@ -1011,16 +887,13 @@ async function copyUserProfile(userId: string) {
             decorationAsset: undefined, nameplateSkuId: undefined, profileEffectId: undefined,
             createdAt: undefined, copiedUserId: userId,
         };
-
         if (user.bio !== undefined)    newData.bio = user.bio || "";
         if (profile.bio !== undefined) newData.bio = profile.bio || "";
-
         try {
             const avatarUrl = IU?.getUserAvatarURL?.(user, false, 512)
                 ?? (user.avatar ? `https://cdn.discordapp.com/avatars/${userId}/${user.avatar}.${user.avatar.startsWith("a_")?"gif":"png"}?size=512` : null);
             if (avatarUrl) newData.avatar = avatarUrl;
         } catch { }
-
         const hasNitro = (profile.premiumType ?? 0) > 0;
         newData.nitro = hasNitro;
         if (hasNitro) {
@@ -1030,20 +903,16 @@ async function copyUserProfile(userId: string) {
                 newData.nitroLevel = months>=72?7:months>=36?6:months>=24?5:months>=12?4:months>=6?3:months>=3?2:months>=2?1:0;
             } else { newData.nitroLevel = 0; }
         }
-
         const boostSince = profile.premiumGuildSince ?? null;
         if (boostSince) {
             const bm = Math.floor((Date.now() - new Date(boostSince).getTime()) / (1000*60*60*24*30));
             newData.boostMonths = bm>=24?8:bm>=18?7:bm>=15?6:bm>=12?5:bm>=9?4:bm>=6?3:bm>=3?2:bm>=2?1:0;
         }
-
         const bannerId = profile.banner ?? user.banner ?? null;
         if (bannerId) newData.banner = `https://cdn.discordapp.com/banners/${userId}/${bannerId}.${bannerId.startsWith("a_")?"gif":"png"}?size=512`;
         if (profile.accentColor !== undefined) newData.accentColor = profile.accentColor;
         else if (user.accentColor !== undefined) newData.accentColor = user.accentColor;
-
         try { const ms = Number(BigInt(userId) >> 22n) + 1420070400000; newData.createdAt = new Date(ms).toISOString().slice(0,10); } catch { }
-
         try {
             const flags = user.publicFlags ?? 0;
             let badgeFlags = 0;
@@ -1051,7 +920,6 @@ async function copyUserProfile(userId: string) {
             newData.badgeFlags = badgeFlags;
             if (user.avatarDecorationData?.asset) newData.decorationAsset = user.avatarDecorationData.asset;
         } catch { }
-
         storedData = newData; isEnabled = true;
         const myIdForCopy = AuthenticationStore?.getId?.();
         if (myIdForCopy) { allAccountsData[myIdForCopy] = newData; allAccountsEnabled[myIdForCopy] = true; }
@@ -1060,7 +928,6 @@ async function copyUserProfile(userId: string) {
     } catch (err) { console.error("[CustomProfile] copyUserProfile error:", err); }
 }
 
-// ─── CONTEXT MENU ─────────────────────────────────────────────────────────────
 const userContextMenuPatch: NavContextMenuPatchCallback = (children, { user }: any) => {
     if (!children || !Array.isArray(children) || !user?.id) return;
     try {
@@ -1090,7 +957,6 @@ const userContextMenuPatch: NavContextMenuPatchCallback = (children, { user }: a
     } catch (err) { console.error("[CustomProfile] Context menu patch error:", err); }
 };
 
-// ─── NAMEPLATE AUTH FETCH ─────────────────────────────────────────────────────
 const _npBlobCache: Record<string, string> = {};
 async function fetchNameplateWithAuth(url: string): Promise<string | null> {
     if (_npBlobCache[url]) return _npBlobCache[url];
@@ -1107,7 +973,6 @@ async function fetchNameplateWithAuth(url: string): Promise<string | null> {
     } catch { return null; }
 }
 
-// ─── COMPONENTS ───────────────────────────────────────────────────────────────
 function NameplateBtn({ np, active, onClick }: { np: typeof NAMEPLATES[0]; active: boolean; onClick: () => void; }) {
     const urls = React.useMemo(() => getNameplateUrls(np), [np.skuId]);
     const [imgSrc, setImgSrc] = React.useState<string | null>(null);
@@ -1249,7 +1114,6 @@ function BadgePicker({ selected, onChange, nitroType, onNitroType, boostLevel, o
     );
 }
 
-// ─── FAKE SERVER TAG PICKER ───────────────────────────────────────────────────
 function ServerTagPicker({ tagText, tagIconId, onTagText, onTagIconId }: {
     tagText: string; tagIconId: string;
     onTagText: (v: string) => void; onTagIconId: (v: string) => void;
@@ -1271,26 +1135,14 @@ function ServerTagPicker({ tagText, tagIconId, onTagText, onTagIconId }: {
             </div>
             <SectionLabel style={{ marginTop:0, marginBottom:4 }}>{t("Tag text")}</SectionLabel>
             <div style={{ display:"flex", gap:6, alignItems:"center", marginBottom:12 }}>
-                <input
-                    className="cp-input"
-                    placeholder={t("e.g. FLIP, GANG, MOD...")}
-                    value={tagText}
-                    maxLength={20}
-                    onChange={e => onTagText(e.target.value)}
-                    style={{ flex:1 }}
-                />
+                <input className="cp-input" placeholder={t("e.g. FLIP, GANG, MOD...")} value={tagText} maxLength={20} onChange={e => onTagText(e.target.value)} style={{ flex:1 }} />
                 {tagText && <button className="cp-clear-btn" onClick={() => onTagText("")}><CloseIcon /></button>}
             </div>
             <SectionLabel style={{ marginTop:0, marginBottom:6 }}>{t("Tag icon")}</SectionLabel>
             <div style={{ display:"flex", gap:6, flexWrap:"wrap" }}>
                 {SERVER_TAG_ICONS.map(icon => (
-                    <button
-                        key={icon.id}
-                        onClick={() => onTagIconId(icon.id)}
-                        className={`cp-badge ${tagIconId === icon.id ? "cp-badge--on" : ""}`}
-                        title={icon.label}
-                        style={{ padding:"4px 8px", borderRadius:6, display:"flex", alignItems:"center", gap:4, fontSize:12 }}
-                    >
+                    <button key={icon.id} onClick={() => onTagIconId(icon.id)} className={`cp-badge ${tagIconId === icon.id ? "cp-badge--on" : ""}`} title={icon.label}
+                        style={{ padding:"4px 8px", borderRadius:6, display:"flex", alignItems:"center", gap:4, fontSize:12 }}>
                         {icon.emoji ? <span style={{ fontSize:14 }}>{icon.emoji}</span> : null}
                         <span>{icon.label}</span>
                     </button>
@@ -1316,10 +1168,10 @@ function FontPicker({ fontId, effect, color, color2, onFontId, onEffect, onColor
     React.useEffect(() => setLocalColor(color||""),    [color]);
     React.useEffect(() => setLocalColor2(color2||""),  [color2]);
 
-    function handleFontId(v: number)  { setLocalFontId(v);  onFontId(v);  storedData.displayNameFont   = v;       injectFontStyle(); requestAnimationFrame(() => stampOwnNameElements()); }
-    function handleEffect(v: string)  { setLocalEffect(v);  onEffect(v);  storedData.displayNameEffect = v;       injectFontStyle(); requestAnimationFrame(() => stampOwnNameElements()); }
-    function handleColor(v: string)   { setLocalColor(v);   onColor(v);   storedData.displayNameColor  = v||undefined; injectFontStyle(); requestAnimationFrame(() => stampOwnNameElements()); }
-    function handleColor2(v: string)  { setLocalColor2(v);  onColor2(v);  storedData.displayNameColor2 = v||undefined; injectFontStyle(); requestAnimationFrame(() => stampOwnNameElements()); }
+    function handleFontId(v: number)  { setLocalFontId(v);  onFontId(v);  storedData.displayNameFont   = v;             injectFontStyle(); requestAnimationFrame(() => stampOwnNameElements()); }
+    function handleEffect(v: string)  { setLocalEffect(v);  onEffect(v);  storedData.displayNameEffect = v;             injectFontStyle(); requestAnimationFrame(() => stampOwnNameElements()); }
+    function handleColor(v: string)   { setLocalColor(v);   onColor(v);   storedData.displayNameColor  = v || undefined; injectFontStyle(); requestAnimationFrame(() => stampOwnNameElements()); }
+    function handleColor2(v: string)  { setLocalColor2(v);  onColor2(v);  storedData.displayNameColor2 = v || undefined; injectFontStyle(); requestAnimationFrame(() => stampOwnNameElements()); }
 
     const previewFont   = DISPLAY_NAME_FONTS.find(f => f.fontId === localFontId) ?? DISPLAY_NAME_FONTS[0];
     const baseColor     = localColor  || "#00c8ff";
@@ -1434,7 +1286,6 @@ function FontPicker({ fontId, effect, color, color2, onFontId, onEffect, onColor
     );
 }
 
-// ─── MODAL ────────────────────────────────────────────────────────────────────
 function CustomProfileModal({ rootProps }: { rootProps: any }) {
     const myId = AuthenticationStore?.getId?.() || "";
     const [selectedAccountId, setSelectedAccountId] = React.useState(myId);
@@ -1460,10 +1311,18 @@ function CustomProfileModal({ rootProps }: { rootProps: any }) {
 
     const accounts = React.useMemo(() => {
         try {
-            const MAS = (window as any).Vencord?.Webpack?.findByProps?.("getUsers","getValidUsers");
-            if (MAS?.getUsers) { const users = MAS.getUsers(); if (Array.isArray(users) && users.length > 0) return users; }
+            const MAS = (window as any).Vencord?.Webpack?.findByProps?.("getUsers","getValidUsers","getHasLoggedInAccounts");
+            if (MAS?.getUsers) {
+                const raw = MAS.getUsers();
+                if (Array.isArray(raw) && raw.length > 0) return raw;
+                if (raw && typeof raw === "object") { const vals = Object.values(raw); if (vals.length > 0) return vals; }
+            }
             const internalStore = (window as any).Vencord?.Webpack?.findStore?.("MultiAccountStore");
-            if (internalStore?.getUsers) { const users = internalStore.getUsers(); if (Array.isArray(users) && users.length > 0) return users; }
+            if (internalStore?.getUsers) {
+                const raw = internalStore.getUsers();
+                if (Array.isArray(raw) && raw.length > 0) return raw;
+                if (raw && typeof raw === "object") { const vals = Object.values(raw); if (vals.length > 0) return vals; }
+            }
         } catch (e) { console.error("[CustomProfile] Failed to fetch accounts:", e); }
         const me = UserStore.getCurrentUser();
         return me ? [me] : [];
@@ -1479,61 +1338,27 @@ function CustomProfileModal({ rootProps }: { rootProps: any }) {
         try {
             setSaving(true);
             const savedData: CustomProfileData = { ...dataRef.current };
-
             allAccountsData[selectedAccountId]    = savedData;
             allAccountsEnabled[selectedAccountId] = true;
-
             if (selectedAccountId === myId) {
-                storedData = savedData;
-                isEnabled = true;
-                // Immediately invalidate all caches so next re-render picks up the new data
-                cachedFakeUser = null;
-                cachedOriginalUser = null;
-                _dataVersion++;
+                storedData = savedData; isEnabled = true;
+                cachedFakeUser = null; cachedOriginalUser = null; _dataVersion++;
             }
-
-            // Persist synchronously to localStorage first so it's available immediately
             saveAllDataSync();
             if (selectedAccountId === myId) saveDataSync(storedData, true);
-
-            // Then persist to DataStore
             await persistToDataStore();
-
             if (selectedAccountId === myId) {
                 if (storedData.displayNameFont) { injectFontStyle(); requestAnimationFrame(() => stampOwnNameElements()); }
                 else removeFontStyle();
                 updateCachedRealData();
-
-                // Force a full re-render sequence with staggered delays to ensure
-                // nameplate, effects, and other collectibles all show up correctly
                 forceFullRerender();
-
-                // Extra re-render passes after short delays to catch lazy-loaded components
-                setTimeout(() => {
-                    cachedFakeUser = null;
-                    cachedOriginalUser = null;
-                    forceFullRerender();
-                }, 150);
-                setTimeout(() => {
-                    cachedFakeUser = null;
-                    cachedOriginalUser = null;
-                    forceFullRerender();
-                }, 500);
-                setTimeout(() => {
-                    cachedFakeUser = null;
-                    cachedOriginalUser = null;
-                    forceFullRerender();
-                    startDomObserver();
-                }, 1000);
+                setTimeout(() => { cachedFakeUser = null; cachedOriginalUser = null; forceFullRerender(); }, 150);
+                setTimeout(() => { cachedFakeUser = null; cachedOriginalUser = null; forceFullRerender(); }, 500);
+                setTimeout(() => { cachedFakeUser = null; cachedOriginalUser = null; forceFullRerender(); startDomObserver(); }, 1000);
             }
-
             setSaveCount(c => c + 1);
-        } catch (err) {
-            console.error("[CustomProfile] save error:", err);
-        } finally {
-            setSaving(false);
-            rootProps.onClose();
-        }
+        } catch (err) { console.error("[CustomProfile] save error:", err); }
+        finally { setSaving(false); rootProps.onClose(); }
     }
 
     async function reset() {
@@ -1549,11 +1374,8 @@ function CustomProfileModal({ rootProps }: { rootProps: any }) {
             await persistToDataStore();
             try { await DataStore.set(DS_KEY, {}); await DataStore.set(DS_ENABLED, false); } catch { }
             forceFullRerender();
-        } catch (err) {
-            console.error("[CustomProfile] reset error:", err);
-        } finally {
-            rootProps.onClose();
-        }
+        } catch (err) { console.error("[CustomProfile] reset error:", err); }
+        finally { rootProps.onClose(); }
     }
 
     const accentHex = data.accentColor != null ? "#" + data.accentColor.toString(16).padStart(6,"0") : "";
@@ -1624,12 +1446,7 @@ function CustomProfileModal({ rootProps }: { rootProps: any }) {
                 <Field label={t("Email address (local display)")}   value={data.email    ?? ""} placeholder="exemple@mail.com"                onChange={v => set("email", v)}     />
                 <Field label={t("Phone (local display)")}           value={data.phone    ?? ""} placeholder="+33 6 00 00 00 00"               onChange={v => set("phone", v)}     />
                 <div className="cp-divider"/>
-                <ServerTagPicker
-                    tagText={tagText}
-                    tagIconId={tagIconId}
-                    onTagText={v => set("serverTagText", v || undefined)}
-                    onTagIconId={v => set("serverTagIconId", v === "none" ? undefined : v)}
-                />
+                <ServerTagPicker tagText={tagText} tagIconId={tagIconId} onTagText={v => set("serverTagText", v || undefined)} onTagIconId={v => set("serverTagIconId", v === "none" ? undefined : v)} />
                 <div className="cp-divider"/>
                 <BadgePicker
                     selected={data.badgeFlags ?? 0} onChange={v => set("badgeFlags", v)}
@@ -1656,7 +1473,7 @@ function CustomProfileModal({ rootProps }: { rootProps: any }) {
                             className={`cp-badge ${data.decorationAsset === dec.asset ? "cp-badge--on" : ""}`} title={dec.label}
                             style={{ padding:3, lineHeight:1.1, width:52, height:52, borderRadius:6, position:"relative", overflow:"hidden" }}>
                             <img src={getDecorationUrl(dec.asset)} alt={dec.label} style={{ width:46, height:46, objectFit:"contain", display:"block" }}
-                                onLoad={e => { const t=(e.target as HTMLImageElement).nextElementSibling as HTMLElement; if(t) t.style.display="none"; }}
+                                onLoad={e => { const tgt=(e.target as HTMLImageElement).nextElementSibling as HTMLElement; if(tgt) tgt.style.display="none"; }}
                                 onError={e => { (e.target as HTMLImageElement).style.display="none"; }} />
                             <span style={{ position:"absolute", inset:0, display:"flex", alignItems:"center", justifyContent:"center", fontSize:9, padding:2, textAlign:"center", overflow:"hidden", lineHeight:1.1 }}>{dec.label}</span>
                         </button>
@@ -1728,7 +1545,6 @@ function CustomProfileButton() {
     return <HeaderBarButton icon={() => <EditIcon size={18}/>} tooltip="Custom Profile" onClick={() => openModal(props => <CustomProfileModal rootProps={props}/>)}/>;
 }
 
-// ─── PLUGIN ───────────────────────────────────────────────────────────────────
 export default definePlugin({
     name: "CustomProfile",
     enabledByDefault: true,
@@ -1789,30 +1605,13 @@ export default definePlugin({
         return !!(isEnabled && userId && this._copiedUserId && userId === this._copiedUserId);
     },
 
-    /**
-     * Builds the fake primary-guild (server tag) object Discord expects on
-     * user.primaryGuild: { tag, identityGuildId, identityEnabled, badge }.
-     * Confirmed via live inspection: the "off" state is
-     * { identityGuildId: null, identityEnabled: false, tag: null, badge: null }.
-     * The tag pill only renders when identityEnabled is true, so that flag
-     * must be set alongside `tag` for the pill to appear next to the name.
-     * We omit a real `badge` hash (no genuine guild asset to point to) and
-     * instead prefix the chosen emoji into `tag` text itself.
-     */
     fakePrimaryGuild(real: any) {
         if (!isEnabled || !storedData.serverTagText) return real ?? null;
         try {
             const iconObj = SERVER_TAG_ICONS.find(i => i.id === (storedData.serverTagIconId ?? "none"));
             const emoji   = (iconObj && iconObj.id !== "none") ? iconObj.emoji + " " : "";
-            return {
-                tag: emoji + storedData.serverTagText,
-                identityGuildId: real?.identityGuildId ?? "1",
-                identityEnabled: true,
-                badge: real?.badge ?? null,
-            };
-        } catch {
-            return real ?? null;
-        }
+            return { tag: emoji + storedData.serverTagText, identityGuildId: real?.identityGuildId ?? "1", identityEnabled: true, badge: real?.badge ?? null };
+        } catch { return real ?? null; }
     },
 
     fakeCurrentUser(user: any) {
@@ -1841,14 +1640,14 @@ export default definePlugin({
             return clone;
         }
 
-        const fakeUser       = storedData.username || realUsername;
+        const fakeUser        = storedData.username || realUsername;
         const hasCustomGlobal = !!storedData.globalName;
-        const fakeGlobal     = hasCustomGlobal ? storedData.globalName : realGlobalName;
-        const origDisplay    = realGlobalName || realDisplayName || realUsername;
-        const fakeDisplay    = hasCustomGlobal ? (storedData.globalName || origDisplay) : origDisplay;
+        const fakeGlobal      = hasCustomGlobal ? storedData.globalName : realGlobalName;
+        const origDisplay     = realGlobalName || realDisplayName || realUsername;
+        const fakeDisplay     = hasCustomGlobal ? (storedData.globalName || origDisplay) : origDisplay;
 
-        Object.defineProperty(clone, "username",    { get: () => isEnabled ? fakeUser    : realUsername,                           set: () => {}, configurable: true, enumerable: true });
-        Object.defineProperty(clone, "globalName",  { get: () => isEnabled ? fakeGlobal  : realGlobalName,                        set: () => {}, configurable: true, enumerable: true });
+        Object.defineProperty(clone, "username",    { get: () => isEnabled ? fakeUser    : realUsername,                                    set: () => {}, configurable: true, enumerable: true });
+        Object.defineProperty(clone, "globalName",  { get: () => isEnabled ? fakeGlobal  : realGlobalName,                                 set: () => {}, configurable: true, enumerable: true });
         Object.defineProperty(clone, "displayName", { get: () => isEnabled ? fakeDisplay : (realDisplayName||realGlobalName||realUsername), set: () => {}, configurable: true, enumerable: true });
 
         if (storedData.email) clone.email = storedData.email;
@@ -1864,23 +1663,17 @@ export default definePlugin({
 
         if (storedData.decorationAsset) {
             clone.avatarDecoration = null;
-            clone.avatarDecorationData = {
-                asset: storedData.decorationAsset,
-                skuId: AVATAR_DECORATIONS.find(d => d.asset === storedData.decorationAsset)?.id ?? storedData.decorationAsset,
-            };
+            clone.avatarDecorationData = { asset: storedData.decorationAsset, skuId: AVATAR_DECORATIONS.find(d => d.asset === storedData.decorationAsset)?.id ?? storedData.decorationAsset };
         }
-
         if (storedData.nameplateSkuId) {
             const np = NAMEPLATES.find(n => n.skuId === storedData.nameplateSkuId);
             if (!clone.collectibles) clone.collectibles = {};
             clone.collectibles = { ...clone.collectibles, nameplate: buildNameplateData(storedData.nameplateSkuId, np) };
         }
-
         if (storedData.profileEffectId) {
             const effect = PROFILE_EFFECTS.find(e => e.id === storedData.profileEffectId);
             clone.profileEffect = { id: storedData.profileEffectId, skuId: storedData.profileEffectId, effectDefinitionId: effect?.effectDefinitionId ?? storedData.profileEffectId };
         }
-
         if (storedData.displayNameFont != null && storedData.displayNameFont > 0) {
             clone.displayNameFont = storedData.displayNameFont;
             if (!clone.premiumType) clone.premiumType = 2;
@@ -1895,14 +1688,8 @@ export default definePlugin({
         const wantedFlags = (isEnabled && storedData.badgeFlags != null) ? storedData.badgeFlags : realUser.publicFlags;
         clone.publicFlags = wantedFlags; clone.flags = wantedFlags;
 
-        // Server tag (primary guild) — Discord renders the small pill next
-        // to the username from user.primaryGuild =
-        // { tag, identityGuildId, identityEnabled, badge }.
-        if (storedData.serverTagText) {
-            clone.primaryGuild = this.fakePrimaryGuild(realUser.primaryGuild);
-        } else if (realUser.primaryGuild !== undefined) {
-            clone.primaryGuild = realUser.primaryGuild;
-        }
+        if (storedData.serverTagText) { clone.primaryGuild = this.fakePrimaryGuild(realUser.primaryGuild); }
+        else if (realUser.primaryGuild !== undefined) { clone.primaryGuild = realUser.primaryGuild; }
 
         if (isEnabled && storedData.nitro) {
             clone.premiumType = 2;
@@ -1949,14 +1736,11 @@ export default definePlugin({
             if (storedData.pronouns)  merged.pronouns  = storedData.pronouns;
             if (storedData.accentColor != null) merged.accentColor = storedData.accentColor;
             if (storedData.banner)    merged.banner    = storedData.banner;
-
             if (storedData.decorationAsset) {
                 merged.avatarDecoration = null;
                 merged.avatarDecorationData = { asset: storedData.decorationAsset, skuId: AVATAR_DECORATIONS.find(d => d.asset === storedData.decorationAsset)?.id ?? storedData.decorationAsset };
             }
-            if (storedData.serverTagText) {
-                merged.primaryGuild = this.fakePrimaryGuild(profile.primaryGuild);
-            }
+            if (storedData.serverTagText) { merged.primaryGuild = this.fakePrimaryGuild(profile.primaryGuild); }
             if (storedData.nameplateSkuId) {
                 const baseCollectibles = profile.collectibles ? { ...profile.collectibles } : {};
                 const np = NAMEPLATES.find(n => n.skuId === storedData.nameplateSkuId);
@@ -1990,7 +1774,6 @@ export default definePlugin({
                     } else { merged.premiumGuildSince = null; }
                 } else { merged.premiumSince = null; merged.premiumGuildSince = null; }
                 merged.publicFlags = (storedData.badgeFlags != null) ? storedData.badgeFlags : profile.publicFlags;
-                merged.badges = [];
             } else if (isEnabled && storedData.nitro === false) {
                 if (!storedData.displayNameFont && !storedData.displayNameColor) {
                     merged.premiumType = profile.premiumType ?? 0;
@@ -2002,7 +1785,7 @@ export default definePlugin({
                 if (profile.premiumSince)      merged.premiumSince      = profile.premiumSince;
                 if (profile.premiumGuildSince) merged.premiumGuildSince = profile.premiumGuildSince;
             }
-            const result = virtualMerge(profile, merged);
+            const result = typeof virtualMerge === "function" ? virtualMerge(profile, merged) : { ...profile, ...merged };
             this._cachedProfileInput = profile; this._cachedProfile = result; this._cachedProfileVersion = _dataVersion;
             return result;
         } catch { return profile; }
@@ -2029,6 +1812,7 @@ export default definePlugin({
     },
 
     async start() {
+        const self = this;
         let loadError = false;
         try {
             applyAvatarPatchEarly();
@@ -2037,12 +1821,13 @@ export default definePlugin({
             FluxDispatcher.subscribe("CONNECTION_OPEN", onAccountSwitch);
             FluxDispatcher.subscribe("READY", scheduleStartupRefreshes);
 
-            // ── UserStore hook ────────────────────────────────────────────────
             try {
                 const US = (Vencord as any).Webpack?.findByProps?.("getCurrentUser","getUser");
                 if (US && !US._cp_perfect_hook) {
                     const origCurrent = US.getCurrentUser.bind(US);
-                    let _lastRealUser: any = null; let _lastFakeResult: any = null; let _lastCacheVersion = -1;
+                    let _lastRealUser: any = null;
+                    let _lastFakeResult: any = null;
+                    let _lastCacheVersion = -1;
                     US.getCurrentUser = () => {
                         const realUser = origCurrent();
                         if (realUser) {
@@ -2052,18 +1837,17 @@ export default definePlugin({
                             }
                             if (realUser === _lastRealUser && _lastCacheVersion === _dataVersion && _lastFakeResult) return _lastFakeResult;
                             _lastRealUser = realUser; _lastCacheVersion = _dataVersion;
-                            _lastFakeResult = this.fakeCurrentUser(realUser);
+                            _lastFakeResult = self.fakeCurrentUser(realUser);
                             return _lastFakeResult;
                         }
-                        return this.fakeCurrentUser(realUser);
+                        return self.fakeCurrentUser(realUser);
                     };
                     const origGet = US.getUser.bind(US);
-                    US.getUser = (id: string) => isMe(id) ? this.fakeCurrentUser(origGet(id)) : origGet(id);
+                    US.getUser = (id: string) => isMe(id) ? self.fakeCurrentUser(origGet(id)) : origGet(id);
                     US._cp_perfect_hook = true;
                 }
             } catch { }
 
-            // ── UserProfileStore hook ─────────────────────────────────────────
             try {
                 const UPS = (Vencord as any).Webpack?.findByProps?.("getUserProfile","getGuildMemberProfile");
                 if (UPS && !UPS._cp_profile_hook) {
@@ -2072,7 +1856,7 @@ export default definePlugin({
                         try {
                             const profile = origGetProfile(userId);
                             if (!isEnabled || !userId || !isMe(userId) || !profile) return profile;
-                            return this.hookUserProfile(profile);
+                            return self.hookUserProfile(profile);
                         } catch { return origGetProfile(userId); }
                     };
                     const origGetGuild = UPS.getGuildMemberProfile.bind(UPS);
@@ -2080,14 +1864,13 @@ export default definePlugin({
                         try {
                             const profile = origGetGuild(userId, guildId);
                             if (!isEnabled || !userId || !isMe(userId) || !profile) return profile;
-                            return this.hookUserProfile(profile);
+                            return self.hookUserProfile(profile);
                         } catch { return origGetGuild(userId, guildId); }
                     };
                     UPS._cp_profile_hook = true;
                 }
             } catch { }
 
-            // ── MultiAccountStore hook ────────────────────────────────────────
             try {
                 const WP  = (Vencord as any).Webpack;
                 const MAS = WP?.findByProps?.("getUsers","getValidUsers","getHasLoggedInAccounts");
@@ -2102,14 +1885,19 @@ export default definePlugin({
                         if (acctData.globalName) patched.globalName = acctData.globalName;
                         return patched;
                     }
-                    if (MAS.getUsers)      { const o = MAS.getUsers.bind(MAS);      MAS.getUsers      = () => { const u = o(); return Array.isArray(u) ? u.map(patchAccountUser) : u; }; }
-                    if (MAS.getValidUsers) { const o = MAS.getValidUsers.bind(MAS); MAS.getValidUsers = () => { const u = o(); return Array.isArray(u) ? u.map(patchAccountUser) : u; }; }
+                    function normaliseUsers(raw: any): any[] {
+                        if (!raw) return [];
+                        if (Array.isArray(raw)) return raw;
+                        if (typeof raw === "object") return Object.values(raw);
+                        return [];
+                    }
+                    if (MAS.getUsers)      { const o = MAS.getUsers.bind(MAS);      MAS.getUsers      = () => normaliseUsers(o()).map(patchAccountUser); }
+                    if (MAS.getValidUsers) { const o = MAS.getValidUsers.bind(MAS); MAS.getValidUsers = () => normaliseUsers(o()).map(patchAccountUser); }
                     MAS._cp_perfect_hook = true;
                     try { MAS.emitChange?.(); } catch { }
                 }
             } catch { }
 
-            // ── SnowflakeUtils hook ───────────────────────────────────────────
             try {
                 if (SnowflakeUtils?.extractTimestamp && !this._origExtractTimestamp) {
                     this._origExtractTimestamp = SnowflakeUtils.extractTimestamp;
@@ -2122,29 +1910,19 @@ export default definePlugin({
                 }
             } catch { }
 
-            // ── loadData then startup sequence ────────────────────────────────
             await loadData().then(() => {
                 updateCachedRealData();
                 applyAvatarPatchEarly();
                 if (isEnabled) {
-                    syncCurrentUserData();
-                    injectFontStyle();
-                    startDomObserver();
-                    forceFullRerender();
-                    scheduleStartupRefreshes();
-                    requestAnimationFrame(removeHideStyle);
-                } else {
-                    removeHideStyle();
-                }
+                    syncCurrentUserData(); injectFontStyle(); startDomObserver(); forceFullRerender();
+                    scheduleStartupRefreshes(); requestAnimationFrame(removeHideStyle);
+                } else { removeHideStyle(); }
                 showLoadNotification(true);
             }).catch(err => {
                 console.error("[CustomProfile] startup loadData failed:", err);
-                loadError = true;
-                removeHideStyle();
-                showLoadNotification(false);
+                loadError = true; removeHideStyle(); showLoadNotification(false);
             });
 
-            // ── Avatar decoration URL hook ────────────────────────────────────
             try {
                 const decoMod = (Vencord as any).Webpack?.findByProps?.("getAvatarDecorationURL");
                 if (decoMod?.getAvatarDecorationURL) {
@@ -2164,21 +1942,16 @@ export default definePlugin({
                 }
             } catch { }
 
-            // ── IconUtils avatar hook ─────────────────────────────────────────
             if (IconUtils?.getUserAvatarURL && !_avatarPatchApplied) {
                 this._origGetUserAvatarURL = IconUtils.getUserAvatarURL;
                 const orig = this._origGetUserAvatarURL;
                 (IconUtils as any).getUserAvatarURL = (user: any, ...args: any[]) => {
-                    if (isEnabled && storedData.avatar) {
-                        const uid = user?.id ?? user?.userId;
-                        if (uid && isMe(uid)) return storedData.avatar;
-                    }
+                    if (isEnabled && storedData.avatar) { const uid = user?.id ?? user?.userId; if (uid && isMe(uid)) return storedData.avatar; }
                     return orig(user, ...args);
                 };
                 _avatarPatchApplied = true;
             }
 
-            // ── Font refresh interval ─────────────────────────────────────────
             const fontRefreshInterval = setInterval(() => {
                 if (!isEnabled || !storedData.displayNameFont) return;
                 if (!document.getElementById(FONT_STYLE_ID)) injectFontStyle();
@@ -2197,8 +1970,6 @@ export default definePlugin({
         {
             getBadges({ userId, badges: nativeBadges }: { userId: string; guildId: string; badges: ProfileBadge[] }) {
                 let badges: ProfileBadge[] = [...(nativeBadges || [])];
-
-                // Only apply fake badges to own profile
                 if (!isEnabled || userId !== UserStore.getCurrentUser()?.id) return badges;
 
                 const style = { borderRadius: "50%", width: "22px", height: "22px" };
@@ -2210,7 +1981,7 @@ export default definePlugin({
 
                 badges = badges.filter(b => {
                     const desc = (b.description || "").toLowerCase();
-                    const icon = (b.iconSrc || "").toLowerCase();
+                const icon = (b.iconSrc || "").toLowerCase();
                     if (["nitro","subscriber","abonn","premium","inscrit"].some(k => desc.includes(k))) return false;
                     if (icon.includes("nitro") || icon.includes("premium")) return false;
                     if (["booster","boost"].some(k => desc.includes(k))) return false;
@@ -2227,79 +1998,56 @@ export default definePlugin({
                 });
 
                 const badgeList: ProfileBadge[] = [];
-                if (storedData.badgeFlags && (storedData.badgeFlags & FLAG.STAFF))            badgeList.push({ description: t("Staff Discord"),        iconSrc: "https://cdn.discordapp.com/badge-icons/5e74e9b61934fc1f67c65515d1f7e60d.png", position:0, props:{ style } });
-                if (storedData.badgeFlags && (storedData.badgeFlags & FLAG.PARTNER))          badgeList.push({ description: t("Partenaire"),            iconSrc: "https://cdn.discordapp.com/badge-icons/3f9748e53446a137a052f3454e2de41e.png", position:0, props:{ style } });
-                if (hasNitroFake)                                                              badgeList.push({ description: "NITRO\nSubscribed since 10/22/21", iconSrc: NITRO_LEVELS[nl].icon, position:0, props:{ style, title:"Nitro" } });
-                if (storedData.badgeFlags && (storedData.badgeFlags & FLAG.HYPESQUAD))        badgeList.push({ description: t("HypeSquad Events"),      iconSrc: "https://cdn.discordapp.com/badge-icons/bf01d1073931f921909045f3a39fd264.png", position:0, props:{ style } });
-                if (storedData.badgeFlags && (storedData.badgeFlags & FLAG.BUG_HUNTER_2))     badgeList.push({ description: t("Bug Hunter Lvl 2"),       iconSrc: "https://cdn.discordapp.com/badge-icons/848f79194d4be5ff5f81505cbd0ce1e6.png", position:0, props:{ style } });
-                if (storedData.badgeFlags && (storedData.badgeFlags & FLAG.BALANCE))          badgeList.push({ description: t("HypeSquad Balance"),      iconSrc: "https://cdn.discordapp.com/badge-icons/3aa41de486fa12454c3761e8e223442e.png", position:0, props:{ style } });
-                if (storedData.badgeFlags && (storedData.badgeFlags & FLAG.BRAVERY))          badgeList.push({ description: t("HypeSquad Bravery"),      iconSrc: "https://cdn.discordapp.com/badge-icons/8a88d63823d8a71cd5e390baa45efa02.png", position:0, props:{ style } });
-                if (storedData.badgeFlags && (storedData.badgeFlags & FLAG.BRILLIANCE))       badgeList.push({ description: t("HypeSquad Brilliance"),   iconSrc: "https://cdn.discordapp.com/badge-icons/011940fd013da3f7fb926e4a1cd2e618.png", position:0, props:{ style } });
-                if (storedData.badgeFlags && (storedData.badgeFlags & FLAG.BUG_HUNTER_1))     badgeList.push({ description: t("Bug Hunter Lvl 1"),       iconSrc: "https://cdn.discordapp.com/badge-icons/2717692c7dca7289b35297368a940dd0.png", position:0, props:{ style } });
-                if (storedData.badgeFlags && (storedData.badgeFlags & FLAG.DEV_VERIFIED))     badgeList.push({ description: t("Verified Developer"),     iconSrc: "https://cdn.discordapp.com/badge-icons/6df5892e0f35b051f8b61eace34f4967.png", position:0, props:{ style } });
-                if (storedData.badgeFlags && (storedData.badgeFlags & FLAG.MOD_ALUMNI))       badgeList.push({ description: t("Former Moderator"),       iconSrc: "https://cdn.discordapp.com/badge-icons/fee1624003e2fee35cb398e125dc479b.png", position:0, props:{ style } });
-                if (storedData.badgeFlags && (storedData.badgeFlags & FLAG.EARLY_SUPPORTER))  badgeList.push({ description: t("Early Supporter"),        iconSrc: "https://cdn.discordapp.com/badge-icons/7060786766c9c840eb3019e725d2b358.png", position:0, props:{ style } });
-                if (hasBoostFake)                                                              badgeList.push({ description: `Server Booster — ${BOOST_LABELS[bm]}`, iconSrc: BOOST_ICONS[bm], position:0, props:{ style, title:`Server Booster — ${BOOST_LABELS[bm]}` } });
-                if (storedData.badgeFlags && (storedData.badgeFlags & FLAG.ACTIVE_DEVELOPER)) badgeList.push({ description: t("Active Developer"),       iconSrc: "https://cdn.discordapp.com/badge-icons/6bdc42827a38498929a4920da12695d9.png", position:0, props:{ style } });
+                if (wantedFlags & FLAG.STAFF)            badgeList.push({ description: t("Staff Discord"),        iconSrc: "https://cdn.discordapp.com/badge-icons/5e74e9b61934fc1f67c65515d1f7e60d.png", props:{ style } });
+                if (wantedFlags & FLAG.PARTNER)          badgeList.push({ description: t("Partenaire"),            iconSrc: "https://cdn.discordapp.com/badge-icons/3f9748e53446a137a052f3454e2de41e.png", props:{ style } });
+                if (hasNitroFake)                        badgeList.push({ description: "NITRO\nSubscribed since 10/22/21", iconSrc: NITRO_LEVELS[nl].icon, props:{ style, title:"Nitro" } });
+                if (wantedFlags & FLAG.HYPESQUAD)        badgeList.push({ description: t("HypeSquad Events"),      iconSrc: "https://cdn.discordapp.com/badge-icons/bf01d1073931f921909045f3a39fd264.png", props:{ style } });
+                if (wantedFlags & FLAG.BUG_HUNTER_2)     badgeList.push({ description: t("Bug Hunter Lvl 2"),      iconSrc: "https://cdn.discordapp.com/badge-icons/848f79194d4be5ff5f81505cbd0ce1e6.png", props:{ style } });
+                if (wantedFlags & FLAG.BALANCE)          badgeList.push({ description: t("HypeSquad Balance"),     iconSrc: "https://cdn.discordapp.com/badge-icons/3aa41de486fa12454c3761e8e223442e.png", props:{ style } });
+                if (wantedFlags & FLAG.BRAVERY)          badgeList.push({ description: t("HypeSquad Bravery"),     iconSrc: "https://cdn.discordapp.com/badge-icons/8a88d63823d8a71cd5e390baa45efa02.png", props:{ style } });
+                if (wantedFlags & FLAG.BRILLIANCE)       badgeList.push({ description: t("HypeSquad Brilliance"),  iconSrc: "https://cdn.discordapp.com/badge-icons/011940fd013da3f7fb926e4a1cd2e618.png", props:{ style } });
+                if (wantedFlags & FLAG.BUG_HUNTER_1)     badgeList.push({ description: t("Bug Hunter Lvl 1"),      iconSrc: "https://cdn.discordapp.com/badge-icons/2717692c7dca7289b35297368a940dd0.png", props:{ style } });
+                if (wantedFlags & FLAG.DEV_VERIFIED)     badgeList.push({ description: t("Verified Developer"),    iconSrc: "https://cdn.discordapp.com/badge-icons/6df5892e0f35b051f8b61eace34f4967.png", props:{ style } });
+                if (wantedFlags & FLAG.MOD_ALUMNI)       badgeList.push({ description: t("Former Moderator"),      iconSrc: "https://cdn.discordapp.com/badge-icons/fee1624003e2fee35cb398e125dc479b.png", props:{ style } });
+                if (wantedFlags & FLAG.EARLY_SUPPORTER)  badgeList.push({ description: t("Early Supporter"),       iconSrc: "https://cdn.discordapp.com/badge-icons/7060786766c9c840eb3019e725d2b358.png", props:{ style } });
+                if (hasBoostFake)                        badgeList.push({ description: `Server Booster — ${BOOST_LABELS[bm]}`, iconSrc: BOOST_ICONS[bm], props:{ style, title:`Server Booster — ${BOOST_LABELS[bm]}` } });
+                if (wantedFlags & FLAG.ACTIVE_DEVELOPER) badgeList.push({ description: t("Active Developer"),      iconSrc: "https://cdn.discordapp.com/badge-icons/6bdc42827a38498929a4920da12695d9.png", props:{ style } });
                 if (storedData.customBadgeIds?.includes("oldname")) {
                     const oldNameText = storedData.oldName ? `Old username\u00a0: ${storedData.oldName}` : "Old username";
-                    badgeList.push({ description: oldNameText, iconSrc: OLD_NAME_BADGE_ICON, position:0, props:{ style, title: oldNameText } });
+                    badgeList.push({ description: oldNameText, iconSrc: OLD_NAME_BADGE_ICON, props:{ style, title: oldNameText } });
                 }
-                if (storedData.customBadgeIds?.includes("quest")) badgeList.push({ description: "Completed a quest",  iconSrc: "https://cdn.discordapp.com/badge-icons/7d9ae358c8c5e118768335dbe68b4fb8.png", position:0, props:{ style } });
-                if (storedData.customBadgeIds?.includes("orbs"))  badgeList.push({ description: "Orbs — Apprentice", iconSrc: "https://cdn.discordapp.com/badge-icons/83d8a1eb09a8d64e59233eec5d4d5c2d.png", position:0, props:{ style } });
+                if (storedData.customBadgeIds?.includes("quest")) badgeList.push({ description: "Completed a quest",  iconSrc: "https://cdn.discordapp.com/badge-icons/7d9ae358c8c5e118768335dbe68b4fb8.png", props:{ style } });
+                if (storedData.customBadgeIds?.includes("orbs"))  badgeList.push({ description: "Orbs — Apprentice", iconSrc: "https://cdn.discordapp.com/badge-icons/83d8a1eb09a8d64e59233eec5d4d5c2d.png", props:{ style } });
 
                 badges.push(...badgeList);
                 return badges;
             }
-        } as ProfileBadge
+        }
     ] as ProfileBadge[],
 
     stop() {
-        // Cancel all timers first
-        for (const t of _startupRefreshTimers) clearTimeout(t);
+        for (const timer of _startupRefreshTimers) clearTimeout(timer);
         _startupRefreshTimers = [];
-
-        if ((this as any)._fontRefreshInterval) {
-            clearInterval((this as any)._fontRefreshInterval);
-            (this as any)._fontRefreshInterval = null;
-        }
-        // Unregister UI hooks
+        if ((this as any)._fontRefreshInterval) { clearInterval((this as any)._fontRefreshInterval); (this as any)._fontRefreshInterval = null; }
         removeHeaderBarButton("custom-profile-btn");
         removeContextMenuPatch("user-context", userContextMenuPatch);
-
-        // Unsubscribe Flux listeners
         try { FluxDispatcher.unsubscribe("CONNECTION_OPEN", onAccountSwitch); } catch { }
         try { FluxDispatcher.unsubscribe("READY", scheduleStartupRefreshes); } catch { }
-
-        // Restore SnowflakeUtils
         if (this._origExtractTimestamp && SnowflakeUtils) {
             try { (SnowflakeUtils as any).extractTimestamp = this._origExtractTimestamp; } catch { }
             this._origExtractTimestamp = null;
         }
-
-        // Restore IconUtils
         if (this._origGetUserAvatarURL && IconUtils) {
             try { (IconUtils as any).getUserAvatarURL = this._origGetUserAvatarURL; } catch { }
             this._origGetUserAvatarURL = null;
         }
         _avatarPatchApplied = false;
-
-        // Clean DOM
-        stopDomObserver();
-        removeFontStyle();
-        removeHideStyle();
+        stopDomObserver(); removeFontStyle(); removeHideStyle();
         document.getElementById(NOTIFICATION_ID)?.remove();
-
-        // Clean user object
         try {
             const myUser = UserStore.getCurrentUser() as any;
-            if (myUser) {
-                try { delete myUser.avatarDecoration; }     catch { }
-                try { delete myUser.avatarDecorationData; } catch { }
-            }
+            if (myUser) { try { delete myUser.avatarDecoration; } catch { } try { delete myUser.avatarDecorationData; } catch { } }
         } catch { }
-
-        // Reset module-level state so a re-enable starts clean
         cachedFakeUser = null; cachedOriginalUser = null; _trueOriginalUser = null;
         _dataVersion++;
         isEnabled = false;
