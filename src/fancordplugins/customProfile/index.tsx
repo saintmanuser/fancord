@@ -64,6 +64,24 @@ const BADGES = [
 
 const OLD_NAME_BADGE_ICON = "https://cdn.discordapp.com/badge-icons/6de6d34650760ba5551a79732e98ed60.png";
 
+const GIFTING_BADGE_ICONS = [
+    "https://i.ibb.co/hJ94PLM2/patron.png", // Patron (1x)
+    "https://i.ibb.co/N6dnXJfX/luminary.png", // Luminary (3x)
+    "https://i.ibb.co/Bm4M61P/Champion.png", // Champion (2x)
+    "https://i.ibb.co/4khSb3v/icon.png", // Icon (6x)
+    "https://i.ibb.co/99scj6xN/hero.png", // Hero (10x)
+    "https://i.ibb.co/4wXq7mGQ/download.png", // Legend (20x)
+];
+const GIFTING_BADGE_LABELS = [
+    t("Gifting Patron"),
+    t("Gifting Champion"),
+    t("Gifting Luminary"),
+    t("Gifting Icon"),
+    t("Gifting Hero"),
+    t("Gifting Legend"),
+];
+const GIFTING_BADGE_IDS = ["gift_patron","gift_champion","gift_luminary","gift_icon","gift_hero","gift_legend"];
+
 const NITRO_LEVELS = [
     { label: t("Nitro (0 mois)"),      icon: "https://cdn.discordapp.com/badge-icons/2ba85e8026a8614b640c2837bcdfe21b.png" },
     { label: t("Bronze (1 mois)"),     icon: "https://cdn.discordapp.com/badge-icons/4f33c4a9c64ce221936bd256c356f91f.png" },
@@ -350,7 +368,7 @@ interface CustomProfileData {
     oldName?: string; decorationAsset?: string; nameplateSkuId?: string;
     profileEffectId?: string; copiedUserId?: string; displayNameFont?: number;
     displayNameEffect?: string; displayNameColor?: string; displayNameColor2?: string;
-    serverTagText?: string; serverTagIconId?: string;
+    serverTagText?: string; serverTagIconId?: string; giftingLevel?: number;
 }
 
 let storedData: CustomProfileData = {};
@@ -883,7 +901,7 @@ async function copyUserProfile(userId: string) {
             username: user.username || "", globalName: user.globalName || "",
             pronouns: "", bio: "", accentColor: undefined, accentColor2: undefined,
             banner: "", avatar: "", badgeFlags: 0, customBadgeIds: [],
-            nitro: false, nitroLevel: -1, boostMonths: -1,
+            nitro: false, nitroLevel: -1, boostMonths: -1, giftingLevel: -1,
             decorationAsset: undefined, nameplateSkuId: undefined, profileEffectId: undefined,
             createdAt: undefined, copiedUserId: userId,
         };
@@ -1071,12 +1089,13 @@ function BadgeBtn({ label, icon, active, onClick }: { label: string; icon?: stri
         </button>
     );
 }
-function BadgePicker({ selected, onChange, nitroType, onNitroType, boostLevel, onBoostLevel, customIds, onCustomIds, oldName, onOldName }: {
+function BadgePicker({ selected, onChange, nitroType, onNitroType, boostLevel, onBoostLevel, customIds, onCustomIds, oldName, onOldName, giftingLevel, onGiftingLevel }: {
     selected: number; onChange: (v: number) => void;
     nitroType: number; onNitroType: (v: number) => void;
     boostLevel: number; onBoostLevel: (v: number) => void;
     customIds: string[]; onCustomIds: (v: string[]) => void;
     oldName: string; onOldName: (v: string) => void;
+    giftingLevel: number; onGiftingLevel: (v: number) => void;
 }) {
     const hasOldName = customIds.includes("oldname");
     return (
@@ -1089,6 +1108,14 @@ function BadgePicker({ selected, onChange, nitroType, onNitroType, boostLevel, o
             <div className="cp-badges">
                 <BadgeBtn label={t("None")} active={nitroType === -1} onClick={() => onNitroType(-1)} />
                 {NITRO_LEVELS.map((n, i) => <BadgeBtn key={i} label={n.label} icon={n.icon} active={nitroType === i} onClick={() => onNitroType(i)} />)}
+            </div>
+            <SectionLabel style={{ marginTop:8 }}>{t("Gifting Badge")}</SectionLabel>
+            <div style={{ fontSize:11, color:"var(--text-muted)", marginBottom:6 }}>{t("Evolving badge earned by gifting Nitro to others.")}</div>
+            <div className="cp-badges">
+                <BadgeBtn label={t("None")} active={giftingLevel === -1} onClick={() => onGiftingLevel(-1)} />
+                {GIFTING_BADGE_LABELS.map((lbl, i) => (
+                    <BadgeBtn key={i} label={lbl} icon={GIFTING_BADGE_ICONS[i]} active={giftingLevel === i} onClick={() => onGiftingLevel(i)} />
+                ))}
             </div>
             <SectionLabel style={{ marginTop:8 }}>{t("Special Badges")}</SectionLabel>
             <div className="cp-badges">
@@ -1295,12 +1322,13 @@ function CustomProfileModal({ rootProps }: { rootProps: any }) {
     const dataRef = React.useRef(data);
     React.useEffect(() => { dataRef.current = data; }, [data]);
 
-    const nitroLevel = data.nitroLevel ?? -1;
-    const boostLevel = data.boostMonths ?? -1;
-    const customIds  = data.customBadgeIds ?? [];
-    const oldName    = data.oldName ?? "";
-    const tagText    = data.serverTagText ?? "";
-    const tagIconId  = data.serverTagIconId ?? "none";
+    const nitroLevel  = data.nitroLevel  ?? -1;
+    const boostLevel  = data.boostMonths ?? -1;
+    const giftingLevel = data.giftingLevel ?? -1;
+    const customIds   = data.customBadgeIds ?? [];
+    const oldName     = data.oldName ?? "";
+    const tagText     = data.serverTagText ?? "";
+    const tagIconId   = data.serverTagIconId ?? "none";
 
     const previewDisplayName = React.useMemo(() => {
         if (data.globalName?.trim()) return data.globalName.trim();
@@ -1454,6 +1482,7 @@ function CustomProfileModal({ rootProps }: { rootProps: any }) {
                     boostLevel={boostLevel} onBoostLevel={v => set("boostMonths", v)}
                     customIds={customIds} onCustomIds={v => set("customBadgeIds", v)}
                     oldName={oldName} onOldName={v => set("oldName", v)}
+                    giftingLevel={giftingLevel} onGiftingLevel={v => set("giftingLevel", v)}
                 />
                 <div className="cp-divider"/>
                 <FontPicker
@@ -1972,20 +2001,23 @@ export default definePlugin({
                 let badges: ProfileBadge[] = [...(nativeBadges || [])];
                 if (!isEnabled || userId !== UserStore.getCurrentUser()?.id) return badges;
 
-                const style = { borderRadius: "50%", width: "22px", height: "22px" };
+                const style = { borderRadius: "0%", width: "22px", height: "22px" };
                 const nl = storedData.nitroLevel  ?? -1;
                 const bm = storedData.boostMonths ?? -1;
-                const hasNitroFake = nl >= 0 && nl < NITRO_LEVELS.length;
-                const hasBoostFake = bm >= 0 && bm < BOOST_ICONS.length;
-                const wantedFlags  = storedData.badgeFlags ?? 0;
+                const gl = storedData.giftingLevel ?? -1;
+                const hasNitroFake   = nl >= 0 && nl < NITRO_LEVELS.length;
+                const hasBoostFake   = bm >= 0 && bm < BOOST_ICONS.length;
+                const hasGiftingFake = gl >= 0 && gl < GIFTING_BADGE_ICONS.length;
+                const wantedFlags    = storedData.badgeFlags ?? 0;
 
                 badges = badges.filter(b => {
                     const desc = (b.description || "").toLowerCase();
-                const icon = (b.iconSrc || "").toLowerCase();
+                    const icon = (b.iconSrc || "").toLowerCase();
                     if (["nitro","subscriber","abonn","premium","inscrit"].some(k => desc.includes(k))) return false;
                     if (icon.includes("nitro") || icon.includes("premium")) return false;
                     if (["booster","boost"].some(k => desc.includes(k))) return false;
                     if (icon.includes("boost") || icon.includes("leveling")) return false;
+                    if (hasGiftingFake && ["gifting","gift","patron","champion","luminary","icon","hero","legend"].some(k => desc.includes(k))) return false;
                     for (const badge of BADGES) {
                         if (wantedFlags & badge.flag) {
                             const kw = badge.label.toLowerCase().split(" ");
@@ -2001,6 +2033,7 @@ export default definePlugin({
                 if (wantedFlags & FLAG.STAFF)            badgeList.push({ description: t("Staff Discord"),        iconSrc: "https://cdn.discordapp.com/badge-icons/5e74e9b61934fc1f67c65515d1f7e60d.png", props:{ style } });
                 if (wantedFlags & FLAG.PARTNER)          badgeList.push({ description: t("Partenaire"),            iconSrc: "https://cdn.discordapp.com/badge-icons/3f9748e53446a137a052f3454e2de41e.png", props:{ style } });
                 if (hasNitroFake)                        badgeList.push({ description: "NITRO\nSubscribed since 10/22/21", iconSrc: NITRO_LEVELS[nl].icon, props:{ style, title:"Nitro" } });
+                if (hasGiftingFake)                      badgeList.push({ description: GIFTING_BADGE_LABELS[gl],   iconSrc: GIFTING_BADGE_ICONS[gl], props:{ style, title: GIFTING_BADGE_LABELS[gl] } });
                 if (wantedFlags & FLAG.HYPESQUAD)        badgeList.push({ description: t("HypeSquad Events"),      iconSrc: "https://cdn.discordapp.com/badge-icons/bf01d1073931f921909045f3a39fd264.png", props:{ style } });
                 if (wantedFlags & FLAG.BUG_HUNTER_2)     badgeList.push({ description: t("Bug Hunter Lvl 2"),      iconSrc: "https://cdn.discordapp.com/badge-icons/848f79194d4be5ff5f81505cbd0ce1e6.png", props:{ style } });
                 if (wantedFlags & FLAG.BALANCE)          badgeList.push({ description: t("HypeSquad Balance"),     iconSrc: "https://cdn.discordapp.com/badge-icons/3aa41de486fa12454c3761e8e223442e.png", props:{ style } });
